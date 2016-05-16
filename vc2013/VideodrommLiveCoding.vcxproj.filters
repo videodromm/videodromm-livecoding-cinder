@@ -124,6 +124,9 @@
     <Filter Include="Blocks\OSC\src">
       <UniqueIdentifier>{5CC8D0A1-80E6-4703-80AC-ED1B53DB815E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="debug">
+      <UniqueIdentifier>{18ad5c13-3120-42c7-b43b-2fa228d327fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\VideodrommLiveCodingApp.cpp">
@@ -331,5 +334,10 @@
     <ResourceCompile Include="Resources.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Debug\VDSettings.xml">
+      <Filter>debug</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
