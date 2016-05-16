@@ -286,7 +286,7 @@ void VideodrommLiveCodingApp::draw()
 	static int selectedRightInputTexture = 1;
 
 	xPos = margin;
-	ui::SetNextWindowSize(ImVec2(520, 600), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
 	sprintf_s(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	if (!ui::Begin(buf))
 	{
