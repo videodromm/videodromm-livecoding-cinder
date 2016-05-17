@@ -1,10 +1,39 @@
 #include "VideodrommLiveCodingApp.h"
 
-
+void VideodrommLiveCodingApp::prepare(Settings *settings)
+{
+	settings->setWindowSize(1024, 768);
+}
 void VideodrommLiveCodingApp::setup()
 {
+	disableFrameRate();
 	// Settings
 	mVDSettings = VDSettings::create();
+	// Session
+	mVDSession = VDSession::create(mVDSettings);
+	// Utils
+	mVDUtils = VDUtils::create(mVDSettings);
+	// Animation
+	mVDAnimation = VDAnimation::create(mVDSettings, mVDSession);
+	// Message router
+	mVDRouter = VDRouter::create(mVDSettings, mVDAnimation, mVDSession);
+	// Mix
+	mMixesFilepath = getAssetPath("") / "mixes.xml";
+	if (fs::exists(mMixesFilepath)) {
+		// load textures from file if one exists
+		mMixes = VDMix::readSettings(loadFile(mMixesFilepath));
+	}
+	else {
+		// otherwise create a texture from scratch
+		mMixes.push_back(VDMix::create());
+	}
+	mVDAnimation->tapTempo();
+
+	mVDUtils->getWindowsResolution();
+
+	mVDSettings->iResolution.x = mVDSettings->mRenderWidth;
+	mVDSettings->iResolution.y = mVDSettings->mRenderHeight;
+
 	// imgui
 	margin = 3;
 	inBetween = 3;
@@ -100,29 +129,66 @@ void VideodrommLiveCodingApp::update()
 }
 void VideodrommLiveCodingApp::updateWindowTitle()
 {
-	getWindow()->setTitle(to_string(getElapsedFrames()) + " " + to_string((int)getAverageFps()) + " fps Live Coding");
+	getWindow()->setTitle(to_string((int)getAverageFps()) + " fps Live Coding");
 }
 void VideodrommLiveCodingApp::cleanup()
 {
-	ui::Shutdown();
+	CI_LOG_V("shutdown");
+	// save settings
+	mVDSettings->save();
+	mVDSession->save();
+	//ui::Shutdown();
 	quit();
 }
 void VideodrommLiveCodingApp::mouseDown(MouseEvent event)
 {
 
 }
+void VideodrommLiveCodingApp::keyDown(KeyEvent event)
+{
+
+	if (!mVDAnimation->handleKeyDown(event)) {
+		// Animation did not handle the key, so handle it here
+		switch (event.getCode()) {
+		case KeyEvent::KEY_ESCAPE:
+			// quit the application
+			quit();
+			break;
+		case KeyEvent::KEY_l:
+			mVDAnimation->load();
+			break;
+		case KeyEvent::KEY_c:
+			// mouse cursor
+			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
+			if (mVDSettings->mCursorVisible) {
+				hideCursor();
+			}
+			else {
+				showCursor();
+			}
+			break;
+		case KeyEvent::KEY_h:
+			removeUI = !removeUI;
+			break;
+		}
+	}
+}
+
+void VideodrommLiveCodingApp::keyUp(KeyEvent event)
+{
+	if (!mVDAnimation->handleKeyUp(event)) {
+		// Animation did not handle the key, so handle it here
+	}
+}
 void VideodrommLiveCodingApp::resizeWindow()
 {
 	mIsResizing = true;
 	// disconnect ui window and io events callbacks
 	ui::disconnectWindow(getWindow());
-
-	// tell the warps our window has been resized, so they properly scale up or down
-	//Warp::handleResize(mWarps);
-
 }
 void VideodrommLiveCodingApp::draw()
 {
+	ImGuiStyle& style = ui::GetStyle();
 	if (mIsResizing) {
 		mIsResizing = false;
 		// set ui window and io events callbacks 
@@ -131,7 +197,6 @@ void VideodrommLiveCodingApp::draw()
 
 #pragma region style
 		// our theme variables
-		ImGuiStyle& style = ui::GetStyle();
 
 		style.WindowPadding = ImVec2(3, 3);
 		style.FramePadding = ImVec2(2, 2);
@@ -277,8 +342,34 @@ void VideodrommLiveCodingApp::draw()
 
 #pragma endregion draw
 
-
 	// imgui
+	if (removeUI) return;
+#pragma region menu
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New")) {}
+			if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+			if (ImGui::BeginMenu("Open Recent"))
+			{
+				ImGui::MenuItem("live.frag");
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Save", "Ctrl+S")) { }
+			if (ImGui::MenuItem("Save As..")) {}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Options"))
+		{
+			ImGui::DragFloat("Global Alpha", &style.Alpha, 0.005f, 0.20f, 1.0f, "%.2f");
+			ImGui::EndMenu();
+		}
+		if (ImGui::MenuItem("Quit", "Alt+F4")) { cleanup(); }
+		ImGui::EndMainMenuBar();
+	}
+
+#pragma endregion menu
+
 	static int currentWindowRow1 = 0;
 	static int currentWindowRow2 = 0;
 	static int currentWindowRow3 = 0;
@@ -287,27 +378,27 @@ void VideodrommLiveCodingApp::draw()
 
 	xPos = margin;
 	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
-	sprintf_s(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], (int)getAverageFps());
+	sprintf_s(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	if (!ui::Begin(buf))
 	{
-		ImGui::End();
+		ui::End();
 		return;
 	}
 	{
 		static bool read_only = false;
-		static char text[1024 * 16] = 
-		"/*\n"
-		" Fragment shader.\n"
-		"*/\n\n"
-		"void main(void) {\n"
-		//"\tvec2 uv = v_texcoord;\n"
-		"\tgl_FragColor = vec4(1.0,0.0,0.0,1.0);\n"
-		"}\n";		
+		static char text[1024 * 16] =
+			"/*\n"
+			" Fragment shader.\n"
+			"*/\n\n"
+			"void main(void) {\n"
+			//"\tvec2 uv = v_texcoord;\n"
+			"\tgl_FragColor = vec4(1.0,0.0,0.0,1.0);\n"
+			"}\n";
 
 		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
-		if (ui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+		if (ui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
 			// text changed
 			CI_LOG_V("text changed");
 			try
@@ -334,8 +425,15 @@ void VideodrommLiveCodingApp::draw()
 		}
 		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
 	}
-	ImGui::End();
-
+	ui::End();
+	if (ui::Begin("ImGui Metrics"))
+	{
+		ui::Text("ImGui %s", ui::GetVersion());
+		ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ui::GetIO().Framerate, ui::GetIO().Framerate);
+		ui::Text("%d vertices, %d indices (%d triangles)", ui::GetIO().MetricsRenderVertices, ui::GetIO().MetricsRenderIndices, ui::GetIO().MetricsRenderIndices / 3);
+		ui::Text("%d allocations", ui::GetIO().MetricsAllocs);
+	}
+	ui::End();
 }
 
-CINDER_APP(VideodrommLiveCodingApp, RendererGl)
+CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
