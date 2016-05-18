@@ -6,7 +6,9 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 }
 void VideodrommLiveCodingApp::setup()
 {
+	// maximize fps
 	disableFrameRate();
+	gl::enableVerticalSync(false);
 	// Settings
 	mVDSettings = VDSettings::create();
 	// Session
@@ -412,9 +414,11 @@ void VideodrommLiveCodingApp::draw()
 				aShader->setLabel("live");
 				CI_LOG_V("live.frag loaded and compiled");
 				mFboTextureFragmentShaderString = text;
-				stringstream sParams;
-				sParams << "/*{ \"title\" : \"live.frag\" }*/ " << mFboTextureFragmentShaderString;
-				mVDRouter->wsWrite(sParams.str());
+				//stringstream sParams;
+				//sParams << "/*{ \"title\" : \"live.frag\" }*/ " << mFboTextureFragmentShaderString;
+				//mVDRouter->wsWrite(sParams.str());
+				//mVDRouter->wsWrite("/*{ \"title\" : \"live.frag\" }*/ " + mFboTextureFragmentShaderString);
+				mVDRouter->wsWrite(mFboTextureFragmentShaderString);
 				mError = "";
 			}
 			catch (gl::GlslProgCompileExc &exc)
