@@ -118,18 +118,23 @@ void VideodrommLiveCodingApp::setup()
 
 void VideodrommLiveCodingApp::update()
 {
-	mVDSettings->iChannelTime[0] = getElapsedSeconds();
+	mVDSettings->iFps = getAverageFps();
+	mVDSettings->sFps = toString(floor(mVDSettings->iFps));
+
+	mVDAnimation->update();
+	mVDRouter->update();
+	/*mVDSettings->iChannelTime[0] = getElapsedSeconds();
 	mVDSettings->iChannelTime[1] = getElapsedSeconds() - 1;
 	mVDSettings->iChannelTime[2] = getElapsedSeconds() - 2;
 	mVDSettings->iChannelTime[3] = getElapsedSeconds() - 3;
 	//
-	mVDSettings->iGlobalTime = getElapsedSeconds();
+	mVDSettings->iGlobalTime = getElapsedSeconds();*/
 
 	updateWindowTitle();
 }
 void VideodrommLiveCodingApp::updateWindowTitle()
 {
-	getWindow()->setTitle(to_string((int)getAverageFps()) + " fps Live Coding");
+	getWindow()->setTitle(mVDSettings->sFps + " fps Live Coding");
 }
 void VideodrommLiveCodingApp::cleanup()
 {
@@ -407,6 +412,9 @@ void VideodrommLiveCodingApp::draw()
 				aShader->setLabel("live");
 				CI_LOG_V("live.frag loaded and compiled");
 				mFboTextureFragmentShaderString = text;
+				stringstream sParams;
+				sParams << "{ \"params\" :[{\"name\" : \"shader\",\"value\" : " << mFboTextureFragmentShaderString << "}";
+				mVDRouter->sendJSON(sParams.str());
 				mError = "";
 			}
 			catch (gl::GlslProgCompileExc &exc)
