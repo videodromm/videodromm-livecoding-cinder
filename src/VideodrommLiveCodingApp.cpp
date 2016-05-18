@@ -413,8 +413,8 @@ void VideodrommLiveCodingApp::draw()
 				CI_LOG_V("live.frag loaded and compiled");
 				mFboTextureFragmentShaderString = text;
 				stringstream sParams;
-				sParams << "{ \"params\" :[{\"name\" : \"shader\",\"value\" : " << mFboTextureFragmentShaderString << "}";
-				mVDRouter->sendJSON(sParams.str());
+				sParams << "/*{ \"title\" : \"live.frag\" }*/ " << mFboTextureFragmentShaderString;
+				mVDRouter->wsWrite(sParams.str());
 				mError = "";
 			}
 			catch (gl::GlslProgCompileExc &exc)
