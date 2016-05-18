@@ -414,11 +414,11 @@ void VideodrommLiveCodingApp::draw()
 				aShader->setLabel("live");
 				CI_LOG_V("live.frag loaded and compiled");
 				mFboTextureFragmentShaderString = text;
-				//stringstream sParams;
-				//sParams << "/*{ \"title\" : \"live.frag\" }*/ " << mFboTextureFragmentShaderString;
-				//mVDRouter->wsWrite(sParams.str());
-				//mVDRouter->wsWrite("/*{ \"title\" : \"live.frag\" }*/ " + mFboTextureFragmentShaderString);
-				mVDRouter->wsWrite(mFboTextureFragmentShaderString);
+				stringstream sParams;
+				sParams << "/*{ \"title\" : \"live\" }*/ " << mFboTextureFragmentShaderString;
+				mVDRouter->wsWrite(sParams.str());
+				//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
+				
 				mError = "";
 			}
 			catch (gl::GlslProgCompileExc &exc)
