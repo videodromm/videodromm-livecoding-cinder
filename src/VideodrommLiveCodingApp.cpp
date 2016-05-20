@@ -497,8 +497,7 @@ void VideodrommLiveCodingApp::draw()
 	case 0:
 		// textures
 #pragma region textures
-		for (int i = 0; i < 3; i++) {
-			//TODO find out why t3 no ID!! for (int i = 0; i < mMixes[0]->getInputTexturesCount(0); i++) {
+		for (int i = 0; i < mMixes[0]->getInputTexturesCount(0); i++) {
 			ui::SetNextWindowSize(ImVec2(w, h*1.4));
 			ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
 			ui::Begin(mMixes[0]->getInputTextureName(0, i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
