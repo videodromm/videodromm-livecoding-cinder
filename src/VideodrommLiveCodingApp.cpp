@@ -384,6 +384,125 @@ void VideodrommLiveCodingApp::draw()
 	static int selectedRightInputTexture = 1;
 
 	xPos = margin;
+
+
+#pragma region textures
+	for (int i = 0; i < 3; i++) {
+		//TODO find out why t3 no ID!! for (int i = 0; i < mMixes[0]->getInputTexturesCount(0); i++) {
+			ui::SetNextWindowSize(ImVec2(w, h*1.4));
+		ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
+		ui::Begin(mMixes[0]->getInputTextureName(0, i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+		{
+			//BEGIN
+			/*sprintf_s(buf, "WS##s%d", i);
+			if (ui::Button(buf))
+			{
+			sprintf_s(buf, "IMG=%d.jpg", i);
+			//mBatchass->wsWrite(buf);
+			}
+			if (ui::IsItemHovered()) ui::SetTooltip("Send texture file name via WebSockets");
+			ui::SameLine();
+			sprintf(buf, "FV##s%d", i);
+			if (ui::Button(buf))
+			{
+			mVDTextures->flipTexture(i);
+			}*/
+			ui::PushID(i);
+			ui::Image((void*)mMixes[0]->getFboInputTexture(0, i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
+			ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
+			ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
+			ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+
+			//if (ui::Button("Stop Load")) mVDImageSequences[0]->stopLoading();
+			//ui::SameLine();
+
+			/*if (mVDTextures->inputTextureIsSequence(i)) {
+			if (!(mVDTextures->inputTextureIsLoadingFromDisk(i))) {
+			ui::SameLine();
+			sprintf_s(buf, "l##s%d", i);
+			if (ui::Button(buf))
+			{
+			mVDTextures->inputTextureToggleLoadingFromDisk(i);
+			}
+			if (ui::IsItemHovered()) ui::SetTooltip("Pause loading from disk");
+			}
+			ui::SameLine();
+			sprintf_s(buf, "p##s%d", i);
+			if (ui::Button(buf))
+			{
+			mVDTextures->inputTexturePlayPauseSequence(i);
+			}
+			if (ui::IsItemHovered()) ui::SetTooltip("Play/Pause");
+			ui::SameLine();
+			sprintf_s(buf, "b##s%d", i);
+			if (ui::Button(buf))
+			{
+			mVDTextures->inputTextureSyncToBeatSequence(i);
+			}
+			if (ui::IsItemHovered()) ui::SetTooltip("Sync to beat");
+			ui::SameLine();
+			sprintf_s(buf, "r##s%d", i);
+			if (ui::Button(buf))
+			{
+			mVDTextures->inputTextureReverseSequence(i);
+			}
+			if (ui::IsItemHovered()) ui::SetTooltip("Reverse");
+			playheadPositions[i] = mVDTextures->inputTextureGetPlayheadPosition(i);
+			sprintf_s(buf, "p%d##s%d", playheadPositions[i], i);
+			if (ui::Button(buf))
+			{
+			mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
+			}
+
+			if (ui::SliderInt("scrub", &playheadPositions[i], 0, mVDTextures->inputTextureGetMaxFrame(i)))
+			{
+			mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
+			}
+			speeds[i] = mVDTextures->inputTextureGetSpeed(i);
+			if (ui::SliderInt("speed", &speeds[i], 0.0f, 6.0f))
+			{
+			mVDTextures->inputTextureSetSpeed(i, speeds[i]);
+			}
+
+			}*/
+
+			//END
+			ui::PopStyleColor(3);
+			ui::PopID();
+		}
+		ui::End();
+	}
+
+
+#pragma endregion textures
+
+
+#pragma region fbos
+	for (int i = 0; i < mMixes[0]->getFboCount(); i++)
+	{
+		ui::SetNextWindowSize(ImVec2(w, h));
+		ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
+		ui::Begin(mMixes[0]->getFboLabel(i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+		{
+
+			//ui::PushID(i);
+			ui::Image((void*)mMixes[0]->getFboTexture(i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
+			/*ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
+			ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
+			ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+
+			sprintf_s(buf, "FV##fbo%d", i);
+			if (ui::Button(buf)) mVDTextures->flipFboV(i);
+			if (ui::IsItemHovered()) ui::SetTooltip("Flip vertically");
+
+			ui::PopStyleColor(3);
+			ui::PopID();*/
+		}
+		ui::End();
+	}
+
+
+#pragma endregion fbos
 	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
 	sprintf_s(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	if (!ui::Begin(buf))
