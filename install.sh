@@ -9,7 +9,9 @@ echo Cinder-Videodromm-Fbos
 git clone https://github.com/videodromm/Cinder-Videodromm-Fbos ../../Cinder/blocks/Cinder-Videodromm-Fbos
 echo Cinder-Videodromm-UI
 git clone https://github.com/videodromm/Cinder-Videodromm-UI ../../Cinder/blocks/Cinder-Videodromm-UI
-echo Cinder-Warping
+echo Cinder-Videodromm-Warps
+git clone https://github.com/videodromm/Cinder-Videodromm-Warps ../../Cinder/blocks/Cinder-Videodromm-Warps
+eecho Cinder-Warping
 git clone https://github.com/paulhoux/Cinder-Warping ../../Cinder/blocks/Cinder-Warping
 echo Cinder-ImGui
 git clone https://github.com/simongeilfus/Cinder-ImGui ../../Cinder/blocks/Cinder-ImGui
@@ -17,4 +19,4 @@ echo Cinder-MIDI2
 git clone https://github.com/brucelane/Cinder-MIDI2 ../../Cinder/blocks/Cinder-MIDI2
 echo Cinder-WebSocketPP
 git clone https://github.com/videodromm/Cinder-WebSocketPP ../../Cinder/blocks/Cinder-WebSocketPP
-echo Required Cinder blocks checked out
+cho Required Cinder blocks checked out

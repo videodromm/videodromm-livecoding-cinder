@@ -32,7 +32,6 @@
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		562931B52A524F8091743320 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00A69EF8D1744FE5B14B66B9 /* imgui_demo.cpp */; };
 		58DE496C423647D0BF8D61A3 /* VDMix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4EF87281F341EA8A55C560 /* VDMix.cpp */; };
-		5A6ADC46C0D04572A51B78F5 /* CinderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4B6ACC1089B4451BA20F740 /* CinderMidi.cpp */; };
 		5B87DF2A3DD24A76A4C1BD97 /* VDRouter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81E807EE2284298AB3CB182 /* VDRouter.cpp */; };
 		5FF9F0852D304FFAA4D27EA6 /* VDWarp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 612235031B5D4800B736AC46 /* VDWarp.cpp */; };
 		60A105B4CC3A42B6ADEDEC72 /* WebSocketConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75B54A85581545BEA64E3F6E /* WebSocketConnection.cpp */; };
@@ -105,7 +104,6 @@
 		648967A0BC0B48A790B43D20 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		68B7A5F173214D99A2A49830 /* VDTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VDTexture.h; path = "../../../Cinder/blocks/Cinder-Videodromm-Textures/include/VDTexture.h"; sourceTree = "<group>"; };
 		6BE03624901D4FCBA6E0C62E /* VDSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VDSettings.h; path = "../../../Cinder/blocks/Cinder-Videodromm/include/VDSettings.h"; sourceTree = "<group>"; };
-		6FECF2CA12584846B834B6E2 /* CinderMidi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CinderMidi.h; path = "../../../Cinder/blocks/Cinder-MIDI2/include/CinderMidi.h"; sourceTree = "<group>"; };
 		70CDB421DBBC413CBAE81A7F /* syphonServerDirectory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = syphonServerDirectory.h; path = "../../../Cinder/blocks/Cinder-Syphon/src/syphonServerDirectory.h"; sourceTree = "<group>"; };
 		70E0988943A74B4681C20BF8 /* RtMidi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RtMidi.h; path = "../../../Cinder/blocks/Cinder-MIDI2/lib/RtMidi.h"; sourceTree = "<group>"; };
 		7583EFA33864467E83C9196E /* WebSocketServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebSocketServer.h; path = "../../../Cinder/blocks/Cinder-WebSocketPP/src/WebSocketServer.h"; sourceTree = "<group>"; };
@@ -139,7 +137,6 @@
 		B360B2EA58C14C0E82728D84 /* CinderImGui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = CinderImGui.cpp; path = "../../../Cinder/blocks/Cinder-ImGui/src/CinderImGui.cpp"; sourceTree = "<group>"; };
 		BB8163F725074996BB93C1DE /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		C0A1CC2AC7B743398096DE7A /* RtMidi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = RtMidi.cpp; path = "../../../Cinder/blocks/Cinder-MIDI2/lib/RtMidi.cpp"; sourceTree = "<group>"; };
-		C4B6ACC1089B4451BA20F740 /* CinderMidi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = CinderMidi.cpp; path = "../../../Cinder/blocks/Cinder-MIDI2/src/CinderMidi.cpp"; sourceTree = "<group>"; };
 		C723745CCFA84BF28D4AECF9 /* MidiHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MidiHub.h; path = "../../../Cinder/blocks/Cinder-MIDI2/include/MidiHub.h"; sourceTree = "<group>"; };
 		CB2F418ECAB744B397F8171D /* WarpBilinear.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = WarpBilinear.cpp; path = "../../../Cinder/blocks/Cinder-Warping/src/WarpBilinear.cpp"; sourceTree = "<group>"; };
 		CBB3A22A506546E982FE9711 /* LiveParam.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = LiveParam.cpp; path = "../../../Cinder/blocks/Cinder-Videodromm/src/LiveParam.cpp"; sourceTree = "<group>"; };
@@ -473,7 +470,6 @@
 			isa = PBXGroup;
 			children = (
 				505ED384B9764879A5A78380 /* MidiHub.cpp */,
-				C4B6ACC1089B4451BA20F740 /* CinderMidi.cpp */,
 				902747C90EB646B4BE2D1DB5 /* MidiOut.cpp */,
 			);
 			name = src;
@@ -604,7 +600,6 @@
 		ED2B9027780F4802B312798D /* include */ = {
 			isa = PBXGroup;
 			children = (
-				6FECF2CA12584846B834B6E2 /* CinderMidi.h */,
 				AF2B6E53B074412BA2ED320D /* MidiExceptions.h */,
 				C723745CCFA84BF28D4AECF9 /* MidiHub.h */,
 				9B3C2ACC04CE4A4A960FA0BD /* MidiOut.h */,
@@ -713,7 +708,6 @@
 				562931B52A524F8091743320 /* imgui_demo.cpp in Sources */,
 				9BA2D5B8E3E140EFA0E274A2 /* RtMidi.cpp in Sources */,
 				D5737FCC284E481592B8F029 /* MidiHub.cpp in Sources */,
-				5A6ADC46C0D04572A51B78F5 /* CinderMidi.cpp in Sources */,
 				044C55D1E66B4F808CCC0C86 /* MidiOut.cpp in Sources */,
 				9E2E9E55652047F387E7E01E /* syphonClient.mm in Sources */,
 				531C05ED490D44A1A623FF81 /* syphonServer.mm in Sources */,

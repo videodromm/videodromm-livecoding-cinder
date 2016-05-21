@@ -390,7 +390,7 @@ void VideodrommLiveCodingApp::draw()
 
 	ui::SetNextWindowSize(ImVec2(1000, 100), ImGuiSetCond_Once);
 	ui::SetNextWindowPos(ImVec2(xPos, margin), ImGuiSetCond_Once);
-	sprintf_s(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], (int)mVDSettings->iFps);
+	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], (int)mVDSettings->iFps);
 	ui::Begin(buf);
 	{
 		ImGui::PushItemWidth(mVDSettings->mPreviewFboWidth);
@@ -618,7 +618,7 @@ void VideodrommLiveCodingApp::draw()
 	ui::SetNextWindowPos(ImVec2(xPos, 500), ImGuiSetCond_Once);
 
 	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
-	sprintf_s(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
+	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	if (!ui::Begin(buf))
 	{
 		ui::End();
