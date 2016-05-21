@@ -19,4 +19,6 @@ echo Cinder-MIDI2
 git clone https://github.com/brucelane/Cinder-MIDI2 ../../Cinder/blocks/Cinder-MIDI2
 echo Cinder-WebSocketPP
 git clone https://github.com/videodromm/Cinder-WebSocketPP ../../Cinder/blocks/Cinder-WebSocketPP
-cho Required Cinder blocks checked out
+echo Cinder-WebSocketPP
+git clone https://github.com/videodromm/assets ..
+cho Required dependencies checked out
