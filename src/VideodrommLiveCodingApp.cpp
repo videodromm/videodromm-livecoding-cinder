@@ -379,7 +379,7 @@ void VideodrommLiveCodingApp::draw()
 #pragma endregion menu
 
 	static int currentWindowRow1 = 0;
-	static int currentWindowRow2 = 0;
+	static int currentWindowRow2 = 1;
 	static int currentWindowRow3 = 0;
 	static int selectedLeftInputTexture = 2;
 	static int selectedRightInputTexture = 1;
@@ -389,7 +389,7 @@ void VideodrommLiveCodingApp::draw()
 #pragma region Info
 
 	ui::SetNextWindowSize(ImVec2(1000, 100), ImGuiSetCond_Once);
-	ui::SetNextWindowPos(ImVec2(xPos, margin), ImGuiSetCond_Once);
+	ui::SetNextWindowPos(ImVec2(xPos, margin+15), ImGuiSetCond_Once);
 	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], (int)mVDSettings->iFps);
 	ui::Begin(buf);
 	{
@@ -616,7 +616,6 @@ void VideodrommLiveCodingApp::draw()
 	xPos = margin;
 
 	ui::SetNextWindowPos(ImVec2(xPos, 500), ImGuiSetCond_Once);
-
 	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
 	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	if (!ui::Begin(buf))
@@ -648,7 +647,7 @@ void VideodrommLiveCodingApp::draw()
 				CI_LOG_V("live.frag loaded and compiled");
 				mFboTextureFragmentShaderString = text;
 				stringstream sParams;
-				sParams << "/*{ \"title\" : \"live\" }*/ " << mFboTextureFragmentShaderString;
+				sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
 				mVDRouter->wsWrite(sParams.str());
 				//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
 
@@ -671,14 +670,14 @@ void VideodrommLiveCodingApp::draw()
 		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
 	}
 	ui::End();
-	if (ui::Begin("ImGui Metrics"))
+	/*if (ui::Begin("ImGui Metrics"))
 	{
 		ui::Text("ImGui %s", ui::GetVersion());
 		ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ui::GetIO().Framerate, ui::GetIO().Framerate);
 		ui::Text("%d vertices, %d indices (%d triangles)", ui::GetIO().MetricsRenderVertices, ui::GetIO().MetricsRenderIndices, ui::GetIO().MetricsRenderIndices / 3);
 		ui::Text("%d allocations", ui::GetIO().MetricsAllocs);
 	}
-	ui::End();
+	ui::End();*/
 }
 
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
