@@ -85,11 +85,13 @@ void VideodrommLiveCodingApp::setup()
 		CI_LOG_V("unable to load passthru vertex shader:" + string(e.what()));
 	}
 	// load passthru fragment shader
+	mShaderTextToLoad = false;
 	try
 	{
 		fs::path fragFile = getAssetPath("") / "live.frag";
 		if (fs::exists(fragFile)) {
 			mFboTextureFragmentShaderString = loadString(loadAsset("live.frag"));
+			mShaderTextToLoad = true;
 		}
 		else
 		{
@@ -215,8 +217,12 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 	else if (ext == "glsl") {
 		int rtn = mMixes[0]->loadFboFragmentShader(mFile);
 		if (rtn > -1) {
+			// load success
 			// reset zoom
 			mVDSettings->controlValues[22] = 1.0f;
+			// update text in editor
+			mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(0);
+			mShaderTextToLoad = true;
 		}
 	}
 	else if (ext == "xml") {
@@ -432,7 +438,9 @@ void VideodrommLiveCodingApp::draw()
 	ui::Begin(buf);
 	{
 		static bool read_only = false;
-		static char text[1024 * 16] =
+		
+		size_t const MAX = 16384; // maximum number of chars
+		static char mShaderText[MAX] = 
 			"uniform vec3 iResolution;\n"
 			"uniform vec3 iColor;\n"
 			"uniform float iGlobalTime;\n"
@@ -446,19 +454,22 @@ void VideodrommLiveCodingApp::draw()
 			"\tvec4 t1 = texture2D(iChannel1, uv);\n"
 			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
 			"}\n";
-
+		if (mShaderTextToLoad) {
+			std::copy(mFboTextureFragmentShaderString.begin(), (mFboTextureFragmentShaderString.size() >= MAX ? mFboTextureFragmentShaderString.begin() + MAX : mFboTextureFragmentShaderString.end()), mShaderText);
+		}
 		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
-		if (ui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-			// text changed
+		//if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+				// text changed
 			CI_LOG_V("text changed");
 			try
 			{
-				aShader = gl::GlslProg::create(mPassthruVextexShaderString, text);
+				aShader = gl::GlslProg::create(mPassthruVextexShaderString, mShaderText);
 				aShader->setLabel("live");
 				CI_LOG_V("live.frag loaded and compiled");
-				mFboTextureFragmentShaderString = text;
+				mFboTextureFragmentShaderString = mShaderText;
 				stringstream sParams;
 				sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
 				mVDRouter->wsWrite(sParams.str());

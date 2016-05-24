@@ -92,6 +92,9 @@ private:
 	bool						removeUI;
 	// shader
 	gl::GlslProgRef				aShader;
+	// boolean to update the editor text
+	bool						mShaderTextToLoad; 
+		
 	//! default vertex shader
 	std::string					mPassthruVextexShaderString;
 	//! default fragment shader
