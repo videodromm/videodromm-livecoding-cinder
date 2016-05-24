@@ -47,9 +47,9 @@ void VideodrommLiveCodingApp::setup()
 	largePreviewW = mVDSettings->mPreviewWidth + margin;
 	largePreviewH = (mVDSettings->mPreviewHeight + margin) * 2.4;
 	displayHeight = mVDSettings->mMainWindowHeight - 50;
-	yPosRow1 = 100 + margin;
-	yPosRow2 = yPosRow1 + largePreviewH + margin;
-	yPosRow3 = yPosRow2 + h*1.4 + margin;
+	yPosRow1 = 18;
+	yPosRow2 = 500;
+	yPosRow3 = 600;
 
 	mouseGlobal = false;
 	removeUI = false;
@@ -387,7 +387,6 @@ void VideodrommLiveCodingApp::draw()
 	gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::draw(mFbo->getColorTexture(),getWindowBounds());
 
-
 #pragma endregion draw
 
 	// imgui
@@ -426,12 +425,71 @@ void VideodrommLiveCodingApp::draw()
 
 	xPos = margin;
 
+#pragma region Editor
+	ui::SetNextWindowPos(ImVec2(xPos, yPosRow1), ImGuiSetCond_Once);
+	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
+	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
+	ui::Begin(buf);
+	{
+		static bool read_only = false;
+		static char text[1024 * 16] =
+			"uniform vec3 iResolution;\n"
+			"uniform vec3 iColor;\n"
+			"uniform float iGlobalTime;\n"
+			"uniform sampler2D iChannel0;\n"
+			"uniform sampler2D iChannel1;\n"
+			"\n"
+			"out vec4 oColor;\n"
+			"void main(void) {\n"
+			"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
+			"\tvec4 t0 = texture2D(iChannel0, uv);\n"
+			"\tvec4 t1 = texture2D(iChannel1, uv);\n"
+			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
+			"}\n";
+
+		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+		ui::Checkbox("Read-only", &read_only);
+		ui::PopStyleVar();
+		if (ui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+			// text changed
+			CI_LOG_V("text changed");
+			try
+			{
+				aShader = gl::GlslProg::create(mPassthruVextexShaderString, text);
+				aShader->setLabel("live");
+				CI_LOG_V("live.frag loaded and compiled");
+				mFboTextureFragmentShaderString = text;
+				stringstream sParams;
+				sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
+				mVDRouter->wsWrite(sParams.str());
+				//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
+
+				mError = "";
+			}
+			catch (gl::GlslProgCompileExc &exc)
+			{
+				mError = string(exc.what());
+				CI_LOG_V("unable to load/compile live fragment shader:" + string(exc.what()));
+			}
+			catch (const std::exception &e)
+			{
+				mError = string(e.what());
+				CI_LOG_V("unable to load live fragment shader:" + string(e.what()));
+			}
+		}
+		else {
+			// nothing changed
+		}
+		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
+	}
+	ui::End();
+#pragma endregion Editor
 #pragma region Info
 
-	ui::SetNextWindowSize(ImVec2(1000, 100), ImGuiSetCond_Once);
-	ui::SetNextWindowPos(ImVec2(xPos, margin+15), ImGuiSetCond_Once);
-	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], (int)mVDSettings->iFps);
-	ui::Begin(buf);
+	xPos = margin;
+	ui::SetNextWindowSize(ImVec2(1000, 200), ImGuiSetCond_Once);
+	ui::SetNextWindowPos(ImVec2(xPos, yPosRow3), ImGuiSetCond_Once);
+	ui::Begin("Info");
 	{
 		ImGui::PushItemWidth(mVDSettings->mPreviewFboWidth);
 
@@ -653,69 +711,7 @@ void VideodrommLiveCodingApp::draw()
 #pragma endregion fbos
 		break;
 	}
-	xPos = margin;
 
-	ui::SetNextWindowPos(ImVec2(xPos, 500), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
-	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
-	if (!ui::Begin(buf))
-	{
-		ui::End();
-		return;
-	}
-	{
-		static bool read_only = false;
-		static char text[1024 * 16] = 
-			"uniform vec3 iResolution;\n"
-			"uniform vec3 iColor;\n"
-			"uniform float iGlobalTime;\n"
-			"uniform sampler2D iChannel0;\n"
-			"uniform sampler2D iChannel1;\n"
-			"\n"
-			"out vec4 oColor;\n"
-			"void main(void) {\n"
-			"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
-			"\tvec4 t0 = texture2D(iChannel0, uv);\n"
-			"\tvec4 t1 = texture2D(iChannel1, uv);\n"
-			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
-			"}\n";
-
-		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-		ui::Checkbox("Read-only", &read_only);
-		ui::PopStyleVar();
-		if (ui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-			// text changed
-			CI_LOG_V("text changed");
-			try
-			{
-				aShader = gl::GlslProg::create(mPassthruVextexShaderString, text);
-				aShader->setLabel("live");
-				CI_LOG_V("live.frag loaded and compiled");
-				mFboTextureFragmentShaderString = text;
-				stringstream sParams;
-				sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
-				mVDRouter->wsWrite(sParams.str());
-				//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
-
-				mError = "";
-			}
-			catch (gl::GlslProgCompileExc &exc)
-			{
-				mError = string(exc.what());
-				CI_LOG_V("unable to load/compile live fragment shader:" + string(exc.what()));
-			}
-			catch (const std::exception &e)
-			{
-				mError = string(e.what());
-				CI_LOG_V("unable to load live fragment shader:" + string(e.what()));
-			}
-		}
-		else {
-			// nothing changed
-		}
-		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
-	}
-	ui::End();
 
 }
 
