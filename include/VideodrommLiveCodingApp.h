@@ -37,7 +37,7 @@ public:
 	void mouseDown(MouseEvent event) override;
 	void keyDown(KeyEvent event) override;
 	void keyUp(KeyEvent event) override;
-
+	void fileDrop(FileDropEvent event) override;
 	void update() override;
 	void draw() override;
 	void cleanup() override;

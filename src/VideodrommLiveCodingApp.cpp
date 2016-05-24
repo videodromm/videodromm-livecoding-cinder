@@ -144,7 +144,7 @@ void VideodrommLiveCodingApp::cleanup()
 	// save settings
 	mVDSettings->save();
 	mVDSession->save();
-	//ui::Shutdown();
+	ui::Shutdown();
 	quit();
 }
 void VideodrommLiveCodingApp::mouseDown(MouseEvent event)
@@ -193,6 +193,46 @@ void VideodrommLiveCodingApp::resizeWindow()
 	// disconnect ui window and io events callbacks
 	ui::disconnectWindow(getWindow());
 }
+void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
+{
+	int index = 1;
+	string ext = "";
+	// use the last of the dropped files
+	boost::filesystem::path mPath = event.getFile(event.getNumFiles() - 1);
+	string mFile = mPath.string();
+	int dotIndex = mFile.find_last_of(".");
+	int slashIndex = mFile.find_last_of("\\");
+
+	if (dotIndex != std::string::npos && dotIndex > slashIndex) ext = mFile.substr(mFile.find_last_of(".") + 1);
+
+	if (ext == "wav" || ext == "mp3") {
+	}
+	else if (ext == "png" || ext == "jpg") {
+		if (index < 1) index = 1;
+		if (index > 3) index = 3;
+		mMixes[0]->loadImageFile(mFile, 0, 0, true);
+	}
+	else if (ext == "glsl") {
+		int rtn = mMixes[0]->loadFboFragmentShader(mFile);
+		if (rtn > -1) {
+			// reset zoom
+			mVDSettings->controlValues[22] = 1.0f;
+		}
+	}
+	else if (ext == "xml") {
+	}
+	else if (ext == "mov") {
+		//loadMovie(index, mFile);
+	}
+	else if (ext == "txt") {
+	}
+	else if (ext == "") {
+		// try loading image sequence from dir
+		//loadImageSequence(index, mFile);
+	}
+
+}
+
 void VideodrommLiveCodingApp::draw()
 {
 	ImGuiStyle& style = ui::GetStyle();
@@ -345,7 +385,7 @@ void VideodrommLiveCodingApp::draw()
 
 	gl::clear(Color::black());
 	gl::setMatricesWindow(toPixels(getWindowSize()));
-	gl::draw(mFbo->getColorTexture());
+	gl::draw(mFbo->getColorTexture(),getWindowBounds());
 
 
 #pragma endregion draw
@@ -625,13 +665,19 @@ void VideodrommLiveCodingApp::draw()
 	}
 	{
 		static bool read_only = false;
-		static char text[1024 * 16] =
-			"/*\n"
-			" Fragment shader.\n"
-			"*/\n\n"
+		static char text[1024 * 16] = 
+			"uniform vec3 iResolution;\n"
+			"uniform vec3 iColor;\n"
+			"uniform float iGlobalTime;\n"
+			"uniform sampler2D iChannel0;\n"
+			"uniform sampler2D iChannel1;\n"
+			"\n"
+			"out vec4 oColor;\n"
 			"void main(void) {\n"
-			//"\tvec2 uv = v_texcoord;\n"
-			"\tgl_FragColor = vec4(1.0,0.0,0.0,1.0);\n"
+			"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
+			"\tvec4 t0 = texture2D(iChannel0, uv);\n"
+			"\tvec4 t1 = texture2D(iChannel1, uv);\n"
+			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
 			"}\n";
 
 		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -670,14 +716,7 @@ void VideodrommLiveCodingApp::draw()
 		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
 	}
 	ui::End();
-	/*if (ui::Begin("ImGui Metrics"))
-	{
-		ui::Text("ImGui %s", ui::GetVersion());
-		ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ui::GetIO().Framerate, ui::GetIO().Framerate);
-		ui::Text("%d vertices, %d indices (%d triangles)", ui::GetIO().MetricsRenderVertices, ui::GetIO().MetricsRenderIndices, ui::GetIO().MetricsRenderIndices / 3);
-		ui::Text("%d allocations", ui::GetIO().MetricsAllocs);
-	}
-	ui::End();*/
+
 }
 
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
