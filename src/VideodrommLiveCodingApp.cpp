@@ -95,7 +95,7 @@ void VideodrommLiveCodingApp::setup()
 		}
 		else
 		{
-			mError = "live.frag does not exist, should quit";
+			mError = "live.frag does not exist";
 			CI_LOG_V(mError);
 		}
 		aShader = gl::GlslProg::create(mPassthruVextexShaderString, mFboTextureFragmentShaderString);
@@ -572,9 +572,11 @@ void VideodrommLiveCodingApp::draw()
 
 		ui::SliderFloat("mult x", &mVDSettings->controlValues[13], 0.01f, 10.0f);
 		ui::SameLine();
-		//ImGui::PlotHistogram("Histogram", mMixes[0]->getSmallSpectrum(), 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));
-		//ui::SameLine();
-
+		ui::PlotHistogram("Histogram", mVDSettings->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
+		ui::SameLine();
+		if (mVDSettings->iDebug) {
+			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDSettings->maxVolume)) + " " +toString(mVDSettings->maxVolume) );
+		}
 		if (mVDSettings->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
 		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDSettings->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
 		if (mVDSettings->maxVolume > 240.0) ui::PopStyleColor();
