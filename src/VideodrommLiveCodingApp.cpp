@@ -23,11 +23,11 @@ void VideodrommLiveCodingApp::setup()
 	mMixesFilepath = getAssetPath("") / "mixes.xml";
 	if (fs::exists(mMixesFilepath)) {
 		// load textures from file if one exists
-		mMixes = VDMix::readSettings(loadFile(mMixesFilepath));
+		mMixes = VDMix::readSettings(mVDSettings, mVDAnimation, loadFile(mMixesFilepath));
 	}
 	else {
 		// otherwise create a texture from scratch
-		mMixes.push_back(VDMix::create());
+		mMixes.push_back(VDMix::create(mVDSettings, mVDAnimation));
 	}
 	mVDAnimation->tapTempo();
 
@@ -219,7 +219,7 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 		if (rtn > -1) {
 			// load success
 			// reset zoom
-			mVDSettings->controlValues[22] = 1.0f;
+			mVDAnimation->controlValues[22] = 1.0f;
 			// update text in editor
 			mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(0);
 			mShaderTextToLoad = true;
@@ -330,44 +330,44 @@ void VideodrommLiveCodingApp::draw()
 	aShader->uniform("iChannel0", 0);
 	aShader->uniform("iChannel1", 1);
 	aShader->uniform("iAudio0", 0);
-	aShader->uniform("iFreq0", mVDSettings->iFreqs[0]);
-	aShader->uniform("iFreq1", mVDSettings->iFreqs[1]);
-	aShader->uniform("iFreq2", mVDSettings->iFreqs[2]);
-	aShader->uniform("iFreq3", mVDSettings->iFreqs[3]);
+	aShader->uniform("iFreq0", mVDAnimation->iFreqs[0]);
+	aShader->uniform("iFreq1", mVDAnimation->iFreqs[1]);
+	aShader->uniform("iFreq2", mVDAnimation->iFreqs[2]);
+	aShader->uniform("iFreq3", mVDAnimation->iFreqs[3]);
 	aShader->uniform("iChannelTime", mVDSettings->iChannelTime, 4);
-	aShader->uniform("iColor", vec3(mVDSettings->controlValues[1], mVDSettings->controlValues[2], mVDSettings->controlValues[3]));// mVDSettings->iColor);
-	aShader->uniform("iBackgroundColor", vec3(mVDSettings->controlValues[5], mVDSettings->controlValues[6], mVDSettings->controlValues[7]));// mVDSettings->iBackgroundColor);
-	aShader->uniform("iSteps", (int)mVDSettings->controlValues[20]);
-	aShader->uniform("iRatio", mVDSettings->controlValues[11]);//check if needed: +1;//mVDSettings->iRatio); 
+	aShader->uniform("iColor", vec3(mVDAnimation->controlValues[1], mVDAnimation->controlValues[2], mVDAnimation->controlValues[3]));// mVDSettings->iColor);
+	aShader->uniform("iBackgroundColor", vec3(mVDAnimation->controlValues[5], mVDAnimation->controlValues[6], mVDAnimation->controlValues[7]));// mVDSettings->iBackgroundColor);
+	aShader->uniform("iSteps", (int)mVDAnimation->controlValues[20]);
+	aShader->uniform("iRatio", mVDAnimation->controlValues[11]);//check if needed: +1;//mVDSettings->iRatio); 
 	aShader->uniform("width", 1);
 	aShader->uniform("height", 1);
 	aShader->uniform("iRenderXY", mVDSettings->mRenderXY);
-	aShader->uniform("iZoom", mVDSettings->controlValues[22]);
-	aShader->uniform("iAlpha", mVDSettings->controlValues[4] * mVDSettings->iAlpha);
+	aShader->uniform("iZoom", mVDAnimation->controlValues[22]);
+	aShader->uniform("iAlpha", mVDAnimation->controlValues[4] * mVDSettings->iAlpha);
 	aShader->uniform("iBlendmode", mVDSettings->iBlendMode);
-	aShader->uniform("iChromatic", mVDSettings->controlValues[10]);
-	aShader->uniform("iRotationSpeed", mVDSettings->controlValues[19]);
-	aShader->uniform("iCrossfade", mVDSettings->controlValues[18]);
-	aShader->uniform("iPixelate", mVDSettings->controlValues[15]);
-	aShader->uniform("iExposure", mVDSettings->controlValues[14]);
+	aShader->uniform("iChromatic", mVDAnimation->controlValues[10]);
+	aShader->uniform("iRotationSpeed", mVDAnimation->controlValues[19]);
+	aShader->uniform("iCrossfade", mVDAnimation->controlValues[18]);
+	aShader->uniform("iPixelate", mVDAnimation->controlValues[15]);
+	aShader->uniform("iExposure", mVDAnimation->controlValues[14]);
 	aShader->uniform("iDeltaTime", 1.0f);// mVDAnimation->iDeltaTime);
 	aShader->uniform("iFade", (int)mVDSettings->iFade);
-	aShader->uniform("iToggle", (int)mVDSettings->controlValues[46]);
+	aShader->uniform("iToggle", (int)mVDAnimation->controlValues[46]);
 	aShader->uniform("iLight", (int)mVDSettings->iLight);
 	aShader->uniform("iLightAuto", (int)mVDSettings->iLightAuto);
 	aShader->uniform("iGreyScale", (int)mVDSettings->iGreyScale);
 	aShader->uniform("iTransition", mVDSettings->iTransition);
 	aShader->uniform("iAnim", mVDSettings->iAnim.value());
 	aShader->uniform("iRepeat", (int)mVDSettings->iRepeat);
-	aShader->uniform("iVignette", (int)mVDSettings->controlValues[47]);
-	aShader->uniform("iInvert", (int)mVDSettings->controlValues[48]);
+	aShader->uniform("iVignette", (int)mVDAnimation->controlValues[47]);
+	aShader->uniform("iInvert", (int)mVDAnimation->controlValues[48]);
 	aShader->uniform("iDebug", (int)mVDSettings->iDebug);
 	aShader->uniform("iShowFps", (int)mVDSettings->iShowFps);
 	aShader->uniform("iFps", mVDSettings->iFps);
 	aShader->uniform("iTempoTime", 1.0f);// mVDAnimation->iTempoTime);
-	aShader->uniform("iGlitch", (int)mVDSettings->controlValues[45]);
-	aShader->uniform("iTrixels", mVDSettings->controlValues[16]);
-	aShader->uniform("iGridSize", mVDSettings->controlValues[17]);
+	aShader->uniform("iGlitch", (int)mVDAnimation->controlValues[45]);
+	aShader->uniform("iTrixels", mVDAnimation->controlValues[16]);
+	aShader->uniform("iGridSize", mVDAnimation->controlValues[17]);
 	aShader->uniform("iBeat", mVDSettings->iBeat);
 	aShader->uniform("iSeed", mVDSettings->iSeed);
 	aShader->uniform("iRedMultiplier", mVDSettings->iRedMultiplier);
@@ -566,20 +566,20 @@ void VideodrommLiveCodingApp::draw()
 		if (ui::GetTime() > tRefresh_time + 1.0f / 20.0f)
 		{
 			tRefresh_time = ui::GetTime();
-			timeValues[timeValues_offset] = mVDSettings->maxVolume;
+			timeValues[timeValues_offset] = mVDAnimation->maxVolume;
 			timeValues_offset = (timeValues_offset + 1) % timeValues.size();
 		}
 
-		ui::SliderFloat("mult x", &mVDSettings->controlValues[13], 0.01f, 10.0f);
+		ui::SliderFloat("mult x", &mVDAnimation->controlValues[13], 0.01f, 10.0f);
 		ui::SameLine();
-		ui::PlotHistogram("Histogram", mVDSettings->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
+		ui::PlotHistogram("Histogram", mVDAnimation->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
 		ui::SameLine();
 		if (mVDSettings->iDebug) {
-			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDSettings->maxVolume)) + " " +toString(mVDSettings->maxVolume) );
+			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)) + " " +toString(mVDAnimation->maxVolume) );
 		}
-		if (mVDSettings->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
-		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDSettings->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
-		if (mVDSettings->maxVolume > 240.0) ui::PopStyleColor();
+		if (mVDAnimation->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
+		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
+		if (mVDAnimation->maxVolume > 240.0) ui::PopStyleColor();
 		ui::SameLine();
 		// fps
 		static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
