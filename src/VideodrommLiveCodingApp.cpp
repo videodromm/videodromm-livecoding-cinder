@@ -573,7 +573,7 @@ void VideodrommLiveCodingApp::draw()
 		ui::SameLine();
 		/*if (mVDSettings->iDebug) {
 			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)) + " " + toString(mVDAnimation->maxVolume));
-		}*/
+			}*/
 		if (mVDAnimation->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
 		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
 		if (mVDAnimation->maxVolume > 240.0) ui::PopStyleColor();
@@ -602,11 +602,16 @@ void VideodrommLiveCodingApp::draw()
 
 #pragma endregion Info
 
+	int textureCount = 0;
 	xPos = margin;
 	switch (currentWindowRow2) {
 	case 0:
 		// textures
 #pragma region textures
+		static int XLeft[64];
+		static int YTop[64];
+		static int XRight[64];
+		static int YBottom[64];
 		for (int f = 0; f < mMixes[0]->getFboCount(); f++) {
 			for (int i = 0; i < mMixes[0]->getInputTexturesCount(f); i++) {
 				ui::SetNextWindowSize(ImVec2(w, h));
@@ -632,30 +637,30 @@ void VideodrommLiveCodingApp::draw()
 					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
 					ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
 					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
-					int a = mMixes[0]->getFboInputTextureXLeft(f, i);
-					static int XLeft = mMixes[0]->getFboInputTextureXLeft(f, i);
-					sprintf_s(buf, "XLeft##xl%d%d", f, i);
-					if (ui::SliderInt(buf, &XLeft, -500, 500))
+
+					XLeft[textureCount] = mMixes[0]->getFboInputTextureXLeft(f, i);
+					sprintf_s(buf, "XLeft##xl%d", textureCount);
+					if (ui::SliderInt(buf, &XLeft[textureCount], -500, 500))
 					{
-						mMixes[0]->setFboInputTextureXLeft(f, i, XLeft);
+						mMixes[0]->setFboInputTextureXLeft(f, i, XLeft[textureCount]);
 					}
-					static int YTop = mMixes[0]->getFboInputTextureYTop(f, i);
-					sprintf_s(buf, "YTop##yt%d%d", f, i);
-					if (ui::SliderInt(buf, &YTop, -500, 500))
+					YTop[textureCount] = mMixes[0]->getFboInputTextureYTop(f, i);
+					sprintf_s(buf, "YTop##yt%d", textureCount);
+					if (ui::SliderInt(buf, &YTop[textureCount], -500, 500))
 					{
-						mMixes[0]->setFboInputTextureYTop(f, i, YTop);
+						mMixes[0]->setFboInputTextureYTop(f, i, YTop[textureCount]);
 					}
-					static int XRight = mMixes[0]->getFboInputTextureXRight(f, i);
-					sprintf_s(buf, "XRight##xr%d%d", f, i);
-					if (ui::SliderInt(buf, &XRight, -500, 500))
+					XRight[textureCount] = mMixes[0]->getFboInputTextureXRight(f, i);
+					sprintf_s(buf, "XRight##xr%d", textureCount);
+					if (ui::SliderInt(buf, &XRight[textureCount], -500, 500))
 					{
-						mMixes[0]->setFboInputTextureXRight(f, i, XRight);
+						mMixes[0]->setFboInputTextureXRight(f, i, XRight[textureCount]);
 					}
-					static int YBottom = mMixes[0]->getFboInputTextureYBottom(f, i);
-					sprintf_s(buf, "YBottom##yb%d%d", f, i);
-					if (ui::SliderInt(buf, &YBottom, -500, 500))
+					YBottom[textureCount] = mMixes[0]->getFboInputTextureYBottom(f, i);
+					sprintf_s(buf, "YBottom##yb%d", textureCount);
+					if (ui::SliderInt(buf, &YBottom[textureCount], -500, 500))
 					{
-						mMixes[0]->setFboInputTextureYBottom(f, i, YBottom);
+						mMixes[0]->setFboInputTextureYBottom(f, i, YBottom[textureCount]);
 					}
 					//  
 					//if (ui::Button("Stop Load")) mVDImageSequences[0]->stopLoading();
@@ -714,6 +719,7 @@ void VideodrommLiveCodingApp::draw()
 					//END
 					ui::PopStyleColor(3);
 					ui::PopID();
+					textureCount++;
 				}
 				ui::End();
 				xPos += w + inBetween + margin;
@@ -738,10 +744,10 @@ void VideodrommLiveCodingApp::draw()
 					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(t / 7.0f, 0.8f, 0.8f));
 
 					sprintf_s(buf, "%d##fboit%d%d", t, i, t);
-					if (ui::Button(buf)) mMixes[0]->setFboInputTexture(i,t);
+					if (ui::Button(buf)) mMixes[0]->setFboInputTexture(i, t);
 					if (ui::IsItemHovered()) ui::SetTooltip("Set input texture");
 					ui::SameLine();
-					ui::PopStyleColor(3);					
+					ui::PopStyleColor(3);
 				}
 				ui::PopID();
 			}
