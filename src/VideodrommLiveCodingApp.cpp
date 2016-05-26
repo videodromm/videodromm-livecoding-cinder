@@ -32,6 +32,9 @@ void VideodrommLiveCodingApp::setup()
 	// Console
 	mVDConsole = VDConsole::create(mVDSettings, mMixes[0]);
 	showConsole = true;
+	// UITextures
+	mUITextures = VDUITextures::create(mVDSettings, mMixes[0]);
+	showUITextures = true;
 
 	mVDAnimation->tapTempo();
 
@@ -611,7 +614,17 @@ void VideodrommLiveCodingApp::draw()
 	switch (currentWindowRow2) {
 	case 0:
 		// textures
+
+
 #pragma region textures
+		// UITextures
+		if (showUITextures)
+		{
+			yPos = 400;
+			ui::SetNextWindowSize(ImVec2(600, largePreviewH), ImGuiSetCond_Once);
+			ui::SetNextWindowPos(ImVec2(xPos, yPos), ImGuiSetCond_Once);
+			showVDUITextures();
+		}
 		static int XLeft[64];
 		static int YTop[64];
 		static int XRight[64];
@@ -776,9 +789,13 @@ void VideodrommLiveCodingApp::draw()
 	}
 
 }
-// From imgui by Omar Cornut
-void VideodrommLiveCodingApp::showVDConsole(bool* opened)
-{
+// UI
+void VideodrommLiveCodingApp::showVDConsole(bool* opened) {
 	mVDConsole->Run("Console", opened);
 }
+void VideodrommLiveCodingApp::showVDUITextures() {
+	mUITextures->Run("Textures");
+}
+
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
+

@@ -4,8 +4,6 @@
 
 // UserInterface
 #include "CinderImGui.h"
-// Console
-#include "VDConsole.h"
 // Settings
 #include "VDSettings.h"
 // Session
@@ -20,6 +18,10 @@
 #include "VDAnimation.h"
 // Mix
 #include "VDMix.h"
+// Console
+#include "VDConsole.h"
+// UITextures
+#include "VDUITextures.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -58,6 +60,10 @@ private:
 	VDConsoleRef				mVDConsole;
 	bool						showConsole;
 	void						showVDConsole(bool* opened);
+	// UITextures
+	VDUITexturesRef				mUITextures;
+	bool						showUITextures;
+	void						showVDUITextures();
 
 	// Mix
 	VDMixList					mMixes;
