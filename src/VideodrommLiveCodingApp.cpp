@@ -197,7 +197,8 @@ void VideodrommLiveCodingApp::resizeWindow()
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
-	int index = 1;
+	int index = (int)(event.getX() / (margin + w));// +1;
+
 	string ext = "";
 	// use the last of the dropped files
 	boost::filesystem::path mPath = event.getFile(event.getNumFiles() - 1);
@@ -215,7 +216,7 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 		mMixes[0]->loadImageFile(mFile, 0, 0, true);
 	}
 	else if (ext == "glsl") {
-		int rtn = mMixes[0]->loadFboFragmentShader(mFile);
+		int rtn = mMixes[0]->loadFboFragmentShader(mFile, index);
 		if (rtn > -1) {
 			// load success
 			// reset zoom
@@ -391,7 +392,7 @@ void VideodrommLiveCodingApp::draw()
 
 	gl::clear(Color::black());
 	gl::setMatricesWindow(toPixels(getWindowSize()));
-	gl::draw(mFbo->getColorTexture(),getWindowBounds());
+	gl::draw(mFbo->getColorTexture(), getWindowBounds());
 
 #pragma endregion draw
 
@@ -433,14 +434,14 @@ void VideodrommLiveCodingApp::draw()
 
 #pragma region Editor
 	ui::SetNextWindowPos(ImVec2(xPos, yPosRow1), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(620, 800), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowSize(ImVec2(620, yPosRow2 - 40), ImGuiSetCond_FirstUseEver);
 	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	ui::Begin(buf);
 	{
 		static bool read_only = false;
-		
+
 		size_t const MAX = 16384; // maximum number of chars
-		static char mShaderText[MAX] = 
+		static char mShaderText[MAX] =
 			"uniform vec3 iResolution;\n"
 			"uniform vec3 iColor;\n"
 			"uniform float iGlobalTime;\n"
@@ -455,14 +456,15 @@ void VideodrommLiveCodingApp::draw()
 			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
 			"}\n";
 		if (mShaderTextToLoad) {
+			mShaderTextToLoad = false;
 			std::copy(mFboTextureFragmentShaderString.begin(), (mFboTextureFragmentShaderString.size() >= MAX ? mFboTextureFragmentShaderString.begin() + MAX : mFboTextureFragmentShaderString.end()), mShaderText);
 		}
 		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
 		//if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-				// text changed
+		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, yPosRow2 - 140.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+			// text changed
 			CI_LOG_V("text changed");
 			try
 			{
@@ -574,9 +576,9 @@ void VideodrommLiveCodingApp::draw()
 		ui::SameLine();
 		ui::PlotHistogram("Histogram", mVDAnimation->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
 		ui::SameLine();
-		if (mVDSettings->iDebug) {
-			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)) + " " +toString(mVDAnimation->maxVolume) );
-		}
+		/*if (mVDSettings->iDebug) {
+			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)) + " " + toString(mVDAnimation->maxVolume));
+		}*/
 		if (mVDAnimation->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
 		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
 		if (mVDAnimation->maxVolume > 240.0) ui::PopStyleColor();
@@ -604,126 +606,133 @@ void VideodrommLiveCodingApp::draw()
 	xPos = margin + 1000;
 
 #pragma endregion Info
+
+	xPos = margin;
 	switch (currentWindowRow2) {
 	case 0:
 		// textures
 #pragma region textures
-		for (int i = 0; i < mMixes[0]->getInputTexturesCount(0); i++) {
-			ui::SetNextWindowSize(ImVec2(w, h*1.4));
-			ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
-			ui::Begin(mMixes[0]->getInputTextureName(0, i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-			{
-				//BEGIN
-				/*sprintf_s(buf, "WS##s%d", i);
-				if (ui::Button(buf))
+		for (int f = 0; f < mMixes[0]->getFboCount(); f++) {
+			for (int i = 0; i < mMixes[0]->getInputTexturesCount(f); i++) {
+				ui::SetNextWindowSize(ImVec2(w, h));
+				ui::SetNextWindowPos(ImVec2(xPos, yPosRow2));
+				ui::Begin(mMixes[0]->getInputTextureName(f, i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 				{
-				sprintf_s(buf, "IMG=%d.jpg", i);
-				//mBatchass->wsWrite(buf);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Send texture file name via WebSockets");
-				ui::SameLine();
-				sprintf(buf, "FV##s%d", i);
-				if (ui::Button(buf))
-				{
-				mVDTextures->flipTexture(i);
-				}*/
-				ui::PushID(i);
-				ui::Image((void*)mMixes[0]->getFboInputTexture(0, i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
-				ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
-				ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
-				ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+					//BEGIN
+					/*sprintf_s(buf, "WS##s%d", i);
+					if (ui::Button(buf))
+					{
+					sprintf_s(buf, "IMG=%d.jpg", i);
+					//mBatchass->wsWrite(buf);
+					}
+					if (ui::IsItemHovered()) ui::SetTooltip("Send texture file name via WebSockets");
+					ui::SameLine();
+					sprintf(buf, "FV##s%d", i);
+					if (ui::Button(buf))
+					{
+					mVDTextures->flipTexture(i);
+					}*/
+					ui::PushID(i);
+					ui::Image((void*)mMixes[0]->getFboInputTexture(0, i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
+					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
+					ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
+					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
 
-				//if (ui::Button("Stop Load")) mVDImageSequences[0]->stopLoading();
-				//ui::SameLine();
+					//if (ui::Button("Stop Load")) mVDImageSequences[0]->stopLoading();
+					//ui::SameLine();
 
-				/*if (mVDTextures->inputTextureIsSequence(i)) {
-				if (!(mVDTextures->inputTextureIsLoadingFromDisk(i))) {
-				ui::SameLine();
-				sprintf_s(buf, "l##s%d", i);
-				if (ui::Button(buf))
-				{
-				mVDTextures->inputTextureToggleLoadingFromDisk(i);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Pause loading from disk");
-				}
-				ui::SameLine();
-				sprintf_s(buf, "p##s%d", i);
-				if (ui::Button(buf))
-				{
-				mVDTextures->inputTexturePlayPauseSequence(i);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Play/Pause");
-				ui::SameLine();
-				sprintf_s(buf, "b##s%d", i);
-				if (ui::Button(buf))
-				{
-				mVDTextures->inputTextureSyncToBeatSequence(i);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Sync to beat");
-				ui::SameLine();
-				sprintf_s(buf, "r##s%d", i);
-				if (ui::Button(buf))
-				{
-				mVDTextures->inputTextureReverseSequence(i);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Reverse");
-				playheadPositions[i] = mVDTextures->inputTextureGetPlayheadPosition(i);
-				sprintf_s(buf, "p%d##s%d", playheadPositions[i], i);
-				if (ui::Button(buf))
-				{
-				mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
-				}
+					/*if (mVDTextures->inputTextureIsSequence(i)) {
+					if (!(mVDTextures->inputTextureIsLoadingFromDisk(i))) {
+					ui::SameLine();
+					sprintf_s(buf, "l##s%d", i);
+					if (ui::Button(buf))
+					{
+					mVDTextures->inputTextureToggleLoadingFromDisk(i);
+					}
+					if (ui::IsItemHovered()) ui::SetTooltip("Pause loading from disk");
+					}
+					ui::SameLine();
+					sprintf_s(buf, "p##s%d", i);
+					if (ui::Button(buf))
+					{
+					mVDTextures->inputTexturePlayPauseSequence(i);
+					}
+					if (ui::IsItemHovered()) ui::SetTooltip("Play/Pause");
+					ui::SameLine();
+					sprintf_s(buf, "b##s%d", i);
+					if (ui::Button(buf))
+					{
+					mVDTextures->inputTextureSyncToBeatSequence(i);
+					}
+					if (ui::IsItemHovered()) ui::SetTooltip("Sync to beat");
+					ui::SameLine();
+					sprintf_s(buf, "r##s%d", i);
+					if (ui::Button(buf))
+					{
+					mVDTextures->inputTextureReverseSequence(i);
+					}
+					if (ui::IsItemHovered()) ui::SetTooltip("Reverse");
+					playheadPositions[i] = mVDTextures->inputTextureGetPlayheadPosition(i);
+					sprintf_s(buf, "p%d##s%d", playheadPositions[i], i);
+					if (ui::Button(buf))
+					{
+					mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
+					}
 
-				if (ui::SliderInt("scrub", &playheadPositions[i], 0, mVDTextures->inputTextureGetMaxFrame(i)))
-				{
-				mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
-				}
-				speeds[i] = mVDTextures->inputTextureGetSpeed(i);
-				if (ui::SliderInt("speed", &speeds[i], 0.0f, 6.0f))
-				{
-				mVDTextures->inputTextureSetSpeed(i, speeds[i]);
-				}
+					if (ui::SliderInt("scrub", &playheadPositions[i], 0, mVDTextures->inputTextureGetMaxFrame(i)))
+					{
+					mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
+					}
+					speeds[i] = mVDTextures->inputTextureGetSpeed(i);
+					if (ui::SliderInt("speed", &speeds[i], 0.0f, 6.0f))
+					{
+					mVDTextures->inputTextureSetSpeed(i, speeds[i]);
+					}
 
-				}*/
+					}*/
 
-				//END
-				ui::PopStyleColor(3);
-				ui::PopID();
+					//END
+					ui::PopStyleColor(3);
+					ui::PopID();
+				}
+				ui::End();
+				xPos += w + inBetween + margin;
 			}
-			ui::End();
 		}
-
 
 #pragma endregion textures
 		break;
 	case 1:
 		// Fbos
 #pragma region fbos
-		for (int i = 0; i < mMixes[0]->getFboCount(); i++)
-		{
+		for (unsigned int i = 0; i < mMixes[0]->getFboCount(); i++) {
 			ui::SetNextWindowSize(ImVec2(w, h));
 			ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
 			ui::Begin(mMixes[0]->getFboLabel(i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 			{
 
-				//ui::PushID(i);
+				ui::PushID(i);
 				ui::Image((void*)mMixes[0]->getFboTexture(i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
-				/*ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
-				ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
-				ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+				for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(i); t++) {
+					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(t / 7.0f, 0.6f, 0.6f));
+					ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(t / 7.0f, 0.7f, 0.7f));
+					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(t / 7.0f, 0.8f, 0.8f));
 
-				sprintf_s(buf, "FV##fbo%d", i);
-				if (ui::Button(buf)) mVDTextures->flipFboV(i);
-				if (ui::IsItemHovered()) ui::SetTooltip("Flip vertically");
-
-				ui::PopStyleColor(3);
-				ui::PopID();*/
+					sprintf_s(buf, "%d##fboit%d%d", t, i, t);
+					if (ui::Button(buf)) mMixes[0]->setFboInputTexture(i,t);
+					if (ui::IsItemHovered()) ui::SetTooltip("Set input texture");
+					ui::SameLine();
+					ui::PopStyleColor(3);
+					
+				}
+				ui::PopID();
 			}
 			ui::End();
 		}
 #pragma endregion fbos
 		break;
 	}
+	xPos = margin;
 
 
 }
