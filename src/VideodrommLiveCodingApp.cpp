@@ -127,12 +127,6 @@ void VideodrommLiveCodingApp::update()
 
 	mVDAnimation->update();
 	mVDRouter->update();
-	/*mVDSettings->iChannelTime[0] = getElapsedSeconds();
-	mVDSettings->iChannelTime[1] = getElapsedSeconds() - 1;
-	mVDSettings->iChannelTime[2] = getElapsedSeconds() - 2;
-	mVDSettings->iChannelTime[3] = getElapsedSeconds() - 3;
-	//
-	mVDSettings->iGlobalTime = getElapsedSeconds();*/
 
 	updateWindowTitle();
 }
@@ -209,6 +203,7 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 	if (dotIndex != std::string::npos && dotIndex > slashIndex) ext = mFile.substr(mFile.find_last_of(".") + 1);
 
 	if (ext == "wav" || ext == "mp3") {
+		mMixes[0]->loadAudioFile(mFile);
 	}
 	else if (ext == "png" || ext == "jpg") {
 		if (index < 1) index = 1;
@@ -572,7 +567,7 @@ void VideodrommLiveCodingApp::draw()
 			timeValues_offset = (timeValues_offset + 1) % timeValues.size();
 		}
 
-		ui::SliderFloat("mult x", &mVDAnimation->controlValues[13], 0.01f, 10.0f);
+		ui::SliderFloat("mult x", &mVDAnimation->controlValues[13], 0.01f, 40.0f);
 		ui::SameLine();
 		ui::PlotHistogram("Histogram", mVDAnimation->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
 		ui::SameLine();
