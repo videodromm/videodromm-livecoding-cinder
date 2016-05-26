@@ -54,6 +54,11 @@ private:
 	VDRouterRef					mVDRouter;
 	// Animation
 	VDAnimationRef				mVDAnimation;
+	// Console
+	VDConsoleRef				mVDConsole;
+	bool						showConsole;
+	void						showVDConsole(bool* opened);
+
 	// Mix
 	VDMixList					mMixes;
 	fs::path					mMixesFilepath;

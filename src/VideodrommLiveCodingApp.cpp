@@ -29,6 +29,10 @@ void VideodrommLiveCodingApp::setup()
 		// otherwise create a texture from scratch
 		mMixes.push_back(VDMix::create(mVDSettings, mVDAnimation));
 	}
+	// Console
+	mVDConsole = VDConsole::create(mVDSettings, mMixes[0]);
+	showConsole = true;
+
 	mVDAnimation->tapTempo();
 
 	mVDUtils->getWindowsResolution();
@@ -757,8 +761,24 @@ void VideodrommLiveCodingApp::draw()
 		break;
 	}
 	xPos = margin;
-
+	// console
+	if (showConsole)
+	{
+		yPos = 400;
+		ui::SetNextWindowSize(ImVec2(600, largePreviewH), ImGuiSetCond_Once);
+		ui::SetNextWindowPos(ImVec2(xPos, yPos), ImGuiSetCond_Once);
+		showVDConsole(&showConsole);
+		if (mVDSettings->newMsg)
+		{
+			mVDSettings->newMsg = false;
+			mVDConsole->AddLog(mVDSettings->mMsg.c_str());
+		}
+	}
 
 }
-
+// From imgui by Omar Cornut
+void VideodrommLiveCodingApp::showVDConsole(bool* opened)
+{
+	mVDConsole->Run("Console", opened);
+}
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
