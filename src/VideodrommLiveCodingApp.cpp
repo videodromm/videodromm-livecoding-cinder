@@ -609,7 +609,6 @@ void VideodrommLiveCodingApp::draw()
 
 #pragma endregion Info
 
-	int textureCount = 0;
 	xPos = margin;
 	switch (currentWindowRow2) {
 	case 0:
@@ -625,123 +624,7 @@ void VideodrommLiveCodingApp::draw()
 			ui::SetNextWindowPos(ImVec2(xPos, yPos), ImGuiSetCond_Once);
 			showVDUITextures();
 		}
-		static int XLeft[64];
-		static int YTop[64];
-		static int XRight[64];
-		static int YBottom[64];
-		for (int f = 0; f < mMixes[0]->getFboCount(); f++) {
-			for (int i = 0; i < mMixes[0]->getInputTexturesCount(f); i++) {
-				ui::SetNextWindowSize(ImVec2(w, h));
-				ui::SetNextWindowPos(ImVec2(xPos, yPosRow2));
-				ui::Begin(mMixes[0]->getInputTextureName(f, i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-				{
-					//BEGIN
-					/*sprintf_s(buf, "WS##s%d", i);
-					if (ui::Button(buf))
-					{
-					sprintf_s(buf, "IMG=%d.jpg", i);
-					//mBatchass->wsWrite(buf);
-					}
-					if (ui::IsItemHovered()) ui::SetTooltip("Send texture file name via WebSockets");
-					ui::SameLine();
-					sprintf(buf, "FV##s%d", i);
-					if (ui::Button(buf))
-					{
-					mVDTextures->flipTexture(i);
-					}*/
-					ui::PushID(i);
-					ui::Image((void*)mMixes[0]->getFboInputTexture(f, i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
-					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
-					ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
-					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
 
-					XLeft[textureCount] = mMixes[0]->getFboInputTextureXLeft(f, i);
-					sprintf_s(buf, "XLeft##xl%d", textureCount);
-					if (ui::SliderInt(buf, &XLeft[textureCount], -500, 500))
-					{
-						mMixes[0]->setFboInputTextureXLeft(f, i, XLeft[textureCount]);
-					}
-					YTop[textureCount] = mMixes[0]->getFboInputTextureYTop(f, i);
-					sprintf_s(buf, "YTop##yt%d", textureCount);
-					if (ui::SliderInt(buf, &YTop[textureCount], -500, 500))
-					{
-						mMixes[0]->setFboInputTextureYTop(f, i, YTop[textureCount]);
-					}
-					XRight[textureCount] = mMixes[0]->getFboInputTextureXRight(f, i);
-					sprintf_s(buf, "XRight##xr%d", textureCount);
-					if (ui::SliderInt(buf, &XRight[textureCount], -500, 500))
-					{
-						mMixes[0]->setFboInputTextureXRight(f, i, XRight[textureCount]);
-					}
-					YBottom[textureCount] = mMixes[0]->getFboInputTextureYBottom(f, i);
-					sprintf_s(buf, "YBottom##yb%d", textureCount);
-					if (ui::SliderInt(buf, &YBottom[textureCount], -500, 500))
-					{
-						mMixes[0]->setFboInputTextureYBottom(f, i, YBottom[textureCount]);
-					}
-					//  
-					//if (ui::Button("Stop Load")) mVDImageSequences[0]->stopLoading();
-					//ui::SameLine();
-
-					/*if (mVDTextures->inputTextureIsSequence(i)) {
-					if (!(mVDTextures->inputTextureIsLoadingFromDisk(i))) {
-					ui::SameLine();
-					sprintf_s(buf, "l##s%d", i);
-					if (ui::Button(buf))
-					{
-					mVDTextures->inputTextureToggleLoadingFromDisk(i);
-					}
-					if (ui::IsItemHovered()) ui::SetTooltip("Pause loading from disk");
-					}
-					ui::SameLine();
-					sprintf_s(buf, "p##s%d", i);
-					if (ui::Button(buf))
-					{
-					mVDTextures->inputTexturePlayPauseSequence(i);
-					}
-					if (ui::IsItemHovered()) ui::SetTooltip("Play/Pause");
-					ui::SameLine();
-					sprintf_s(buf, "b##s%d", i);
-					if (ui::Button(buf))
-					{
-					mVDTextures->inputTextureSyncToBeatSequence(i);
-					}
-					if (ui::IsItemHovered()) ui::SetTooltip("Sync to beat");
-					ui::SameLine();
-					sprintf_s(buf, "r##s%d", i);
-					if (ui::Button(buf))
-					{
-					mVDTextures->inputTextureReverseSequence(i);
-					}
-					if (ui::IsItemHovered()) ui::SetTooltip("Reverse");
-					playheadPositions[i] = mVDTextures->inputTextureGetPlayheadPosition(i);
-					sprintf_s(buf, "p%d##s%d", playheadPositions[i], i);
-					if (ui::Button(buf))
-					{
-					mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
-					}
-
-					if (ui::SliderInt("scrub", &playheadPositions[i], 0, mVDTextures->inputTextureGetMaxFrame(i)))
-					{
-					mVDTextures->inputTextureSetPlayheadPosition(i, playheadPositions[i]);
-					}
-					speeds[i] = mVDTextures->inputTextureGetSpeed(i);
-					if (ui::SliderInt("speed", &speeds[i], 0.0f, 6.0f))
-					{
-					mVDTextures->inputTextureSetSpeed(i, speeds[i]);
-					}
-
-					}*/
-
-					//END
-					ui::PopStyleColor(3);
-					ui::PopID();
-					textureCount++;
-				}
-				ui::End();
-				xPos += w + inBetween + margin;
-			}
-		}
 
 #pragma endregion textures
 		break;
