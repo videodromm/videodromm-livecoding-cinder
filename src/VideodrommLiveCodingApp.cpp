@@ -420,7 +420,7 @@ void VideodrommLiveCodingApp::draw()
 #pragma endregion menu
 
 	static int currentWindowRow1 = 0;
-	static int currentWindowRow2 = 1;
+	static int currentWindowRow2 = 0;
 	static int currentWindowRow3 = 0;
 	static int selectedLeftInputTexture = 2;
 	static int selectedRightInputTexture = 1;
@@ -628,11 +628,36 @@ void VideodrommLiveCodingApp::draw()
 					mVDTextures->flipTexture(i);
 					}*/
 					ui::PushID(i);
-					ui::Image((void*)mMixes[0]->getFboInputTexture(0, i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
+					ui::Image((void*)mMixes[0]->getFboInputTexture(f, i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
 					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
 					ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
 					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
-
+					int a = mMixes[0]->getFboInputTextureXLeft(f, i);
+					static int XLeft = mMixes[0]->getFboInputTextureXLeft(f, i);
+					sprintf_s(buf, "XLeft##xl%d%d", f, i);
+					if (ui::SliderInt(buf, &XLeft, -500, 500))
+					{
+						mMixes[0]->setFboInputTextureXLeft(f, i, XLeft);
+					}
+					static int YTop = mMixes[0]->getFboInputTextureYTop(f, i);
+					sprintf_s(buf, "YTop##yt%d%d", f, i);
+					if (ui::SliderInt(buf, &YTop, -500, 500))
+					{
+						mMixes[0]->setFboInputTextureYTop(f, i, YTop);
+					}
+					static int XRight = mMixes[0]->getFboInputTextureXRight(f, i);
+					sprintf_s(buf, "XRight##xr%d%d", f, i);
+					if (ui::SliderInt(buf, &XRight, -500, 500))
+					{
+						mMixes[0]->setFboInputTextureXRight(f, i, XRight);
+					}
+					static int YBottom = mMixes[0]->getFboInputTextureYBottom(f, i);
+					sprintf_s(buf, "YBottom##yb%d%d", f, i);
+					if (ui::SliderInt(buf, &YBottom, -500, 500))
+					{
+						mMixes[0]->setFboInputTextureYBottom(f, i, YBottom);
+					}
+					//  
 					//if (ui::Button("Stop Load")) mVDImageSequences[0]->stopLoading();
 					//ui::SameLine();
 
@@ -705,7 +730,6 @@ void VideodrommLiveCodingApp::draw()
 			ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
 			ui::Begin(mMixes[0]->getFboLabel(i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 			{
-
 				ui::PushID(i);
 				ui::Image((void*)mMixes[0]->getFboTexture(i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
 				for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(i); t++) {
@@ -717,8 +741,7 @@ void VideodrommLiveCodingApp::draw()
 					if (ui::Button(buf)) mMixes[0]->setFboInputTexture(i,t);
 					if (ui::IsItemHovered()) ui::SetTooltip("Set input texture");
 					ui::SameLine();
-					ui::PopStyleColor(3);
-					
+					ui::PopStyleColor(3);					
 				}
 				ui::PopID();
 			}
