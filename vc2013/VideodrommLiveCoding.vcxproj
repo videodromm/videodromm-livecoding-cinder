@@ -120,6 +120,7 @@
   <ItemGroup />
   <ItemGroup>
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-Videodromm-Fbos\include\VDShaders.h" />
+    <ClInclude Include="..\..\..\Cinder\blocks\Cinder-Videodromm-UI\include\VDUIFbos.h" />
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-Videodromm-UI\include\VDUITextures.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-Hap2\src\HapSupport.h" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Cinder\blocks\Cinder-Videodromm-Fbos\src\VDShaders.cpp" />
+    <ClCompile Include="..\..\..\Cinder\blocks\Cinder-Videodromm-UI\src\VDUIFbos.cpp" />
     <ClCompile Include="..\..\..\Cinder\blocks\Cinder-Videodromm-UI\src\VDUITextures.cpp" />
     <ClCompile Include="..\src\VideodrommLiveCodingApp.cpp" />
     <ClCompile Include="..\..\..\Cinder\blocks\Cinder-Hap2\src\MovieHap.cpp" />

@@ -34,7 +34,9 @@ void VideodrommLiveCodingApp::setup()
 	showConsole = true;
 	// UITextures
 	mUITextures = VDUITextures::create(mVDSettings, mMixes[0]);
-	showUITextures = true;
+	// UIFbos
+	mUIFbos = VDUIFbos::create(mVDSettings, mMixes[0]);
+	showUITextures = showUIFbos = true;
 
 	mVDAnimation->tapTempo();
 
@@ -619,71 +621,18 @@ void VideodrommLiveCodingApp::draw()
 		// UITextures
 		if (showUITextures)
 		{
-			yPos = 400;
-			ui::SetNextWindowSize(ImVec2(600, 600), ImGuiSetCond_Once);
-			ui::SetNextWindowPos(ImVec2(xPos, yPos), ImGuiSetCond_Once);
 			showVDUITextures();
 		}
-
-
 #pragma endregion textures
 		break;
 	case 1:
 		// Fbos
 #pragma region fbos
-		for (unsigned int i = 0; i < mMixes[0]->getFboCount(); i++) {
-			ui::SetNextWindowSize(ImVec2(w, h));
-			ui::SetNextWindowPos(ImVec2((i * (w + inBetween)) + margin, yPosRow2));
-			ui::Begin(mMixes[0]->getFboLabel(i).c_str(), NULL, ImVec2(0, 0), ui::GetStyle().Alpha, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-			{
-				ui::PushID(i);
-				ui::Image((void*)mMixes[0]->getFboTexture(i)->getId(), ivec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight));
-				for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(i); t++) {
-					if (t > 0) ui::SameLine();
-					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(t / 7.0f, 0.6f, 0.6f));
-					ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(t / 7.0f, 0.7f, 0.7f));
-					ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(t / 7.0f, 0.8f, 0.8f));
-
-					sprintf_s(buf, "%d##fboit%d%d", t, i, t);
-					if (ui::Button(buf)) mMixes[0]->setFboInputTexture(i, t);
-					if (ui::IsItemHovered()) ui::SetTooltip("Set input texture");
-					ui::PopStyleColor(3);
-				}
-				// left
-				if (mMixes[0]->getLeftFboIndex() == i) {
-					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(0.0f, 1.0f, 0.5f));
-				} else {
-					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(0.0f, 0.1f, 0.1f));
-				}
-				ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(0.0f, 0.7f, 0.7f));
-				ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(0.0f, 0.8f, 0.8f));
-				sprintf_s(buf, "L##s%d", i);
-				if (ui::Button(buf)){
-					mMixes[0]->setLeftFboIndex( i);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Set fbo to left");
-				ui::PopStyleColor(3);
-				//ui::NextColumn();
-				ui::SameLine();
-				// right
-				if (mMixes[0]->getRightFboIndex() == i) {
-					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(0.3f, 1.0f, 0.5f));
-				} else {
-					ui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(0.0f, 0.1f, 0.1f));
-				}
-				ui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(0.3f, 0.7f, 0.7f));
-				ui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(0.3f, 0.8f, 0.8f));
-				sprintf_s(buf, "R##s%d", i);
-				if (ui::Button(buf)){
-					mMixes[0]->setRightFboIndex(i);
-				}
-				if (ui::IsItemHovered()) ui::SetTooltip("Set fbo to right");
-				ui::PopStyleColor(3);
-				
-				ui::PopID();
-			}
-			ui::End();
-		}
+		// UITextures
+		if (showUIFbos)
+		{
+			showVDUIFbos();
+		}		
 #pragma endregion fbos
 		break;
 	}
@@ -710,6 +659,8 @@ void VideodrommLiveCodingApp::showVDConsole(bool* opened) {
 void VideodrommLiveCodingApp::showVDUITextures() {
 	mUITextures->Run("Textures");
 }
-
+void VideodrommLiveCodingApp::showVDUIFbos() {
+	mUIFbos->Run("Textures");
+}
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
 

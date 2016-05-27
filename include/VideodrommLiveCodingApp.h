@@ -22,6 +22,8 @@
 #include "VDConsole.h"
 // UITextures
 #include "VDUITextures.h"
+// UIFbos
+#include "VDUIFbos.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -64,6 +66,10 @@ private:
 	VDUITexturesRef				mUITextures;
 	bool						showUITextures;
 	void						showVDUITextures();
+	// UIFbos
+	VDUIFbosRef					mUIFbos;
+	bool						showUIFbos;
+	void						showVDUIFbos();
 
 	// Mix
 	VDMixList					mMixes;
