@@ -30,13 +30,8 @@ void VideodrommLiveCodingApp::setup()
 		mMixes.push_back(VDMix::create(mVDSettings, mVDAnimation));
 	}
 	// Console
-	mVDConsole = VDConsole::create(mVDSettings, mMixes[0]);
-	showConsole = true;
-	// UITextures
-	mUITextures = VDUITextures::create(mVDSettings, mMixes[0]);
-	// UIFbos
-	mUIFbos = VDUIFbos::create(mVDSettings, mMixes[0]);
-	showUITextures = showUIFbos = true;
+	mVDUI = VDUI::create(mVDSettings, mMixes[0]);
+	showUI = true;
 
 	mVDAnimation->tapTempo();
 
@@ -615,52 +610,30 @@ void VideodrommLiveCodingApp::draw()
 	switch (currentWindowRow2) {
 	case 0:
 		// textures
-
-
 #pragma region textures
-		// UITextures
-		if (showUITextures)
+		// UI
+		if (showUI)
 		{
-			showVDUITextures();
+			showVDUI();
 		}
 #pragma endregion textures
 		break;
 	case 1:
 		// Fbos
 #pragma region fbos
-		// UITextures
-		if (showUIFbos)
+		// UI
+		if (showUI)
 		{
-			showVDUIFbos();
+			showVDUI();
 		}		
 #pragma endregion fbos
 		break;
 	}
-	xPos = margin;
-	// console
-	if (showConsole)
-	{
-		yPos = 400;
-		ui::SetNextWindowSize(ImVec2(600, largePreviewH), ImGuiSetCond_Once);
-		ui::SetNextWindowPos(ImVec2(xPos, yPos), ImGuiSetCond_Once);
-		showVDConsole(&showConsole);
-		if (mVDSettings->newMsg)
-		{
-			mVDSettings->newMsg = false;
-			mVDConsole->AddLog(mVDSettings->mMsg.c_str());
-		}
-	}
-
 }
 // UI
-void VideodrommLiveCodingApp::showVDConsole(bool* opened) {
-	mVDConsole->Run("Console", opened);
+void VideodrommLiveCodingApp::showVDUI() {
+	mVDUI->Run("UI");
 }
-void VideodrommLiveCodingApp::showVDUITextures() {
-	mUITextures->Run("Textures");
-}
-void VideodrommLiveCodingApp::showVDUIFbos() {
-	mUIFbos->Run("Textures");
-}
+
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
 

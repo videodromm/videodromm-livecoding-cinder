@@ -18,12 +18,9 @@
 #include "VDAnimation.h"
 // Mix
 #include "VDMix.h"
-// Console
-#include "VDConsole.h"
-// UITextures
-#include "VDUITextures.h"
-// UIFbos
-#include "VDUIFbos.h"
+// UI
+#include "VDUI.h"
+
 
 using namespace ci;
 using namespace ci::app;
@@ -58,18 +55,10 @@ private:
 	VDRouterRef					mVDRouter;
 	// Animation
 	VDAnimationRef				mVDAnimation;
-	// Console
-	VDConsoleRef				mVDConsole;
-	bool						showConsole;
-	void						showVDConsole(bool* opened);
-	// UITextures
-	VDUITexturesRef				mUITextures;
-	bool						showUITextures;
-	void						showVDUITextures();
-	// UIFbos
-	VDUIFbosRef					mUIFbos;
-	bool						showUIFbos;
-	void						showVDUIFbos();
+	// UI
+	VDUIRef						mVDUI;
+	bool						showUI;
+	void						showVDUI();
 
 	// Mix
 	VDMixList					mMixes;
