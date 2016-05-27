@@ -57,8 +57,7 @@ private:
 	VDAnimationRef				mVDAnimation;
 	// UI
 	VDUIRef						mVDUI;
-	bool						showUI;
-	void						showVDUI();
+	void						showVDUI(unsigned int window);
 
 	// Mix
 	VDMixList					mMixes;

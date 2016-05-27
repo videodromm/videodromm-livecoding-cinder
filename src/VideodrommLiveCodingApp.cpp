@@ -31,7 +31,6 @@ void VideodrommLiveCodingApp::setup()
 	}
 	// Console
 	mVDUI = VDUI::create(mVDSettings, mMixes[0]);
-	showUI = true;
 
 	mVDAnimation->tapTempo();
 
@@ -607,32 +606,11 @@ void VideodrommLiveCodingApp::draw()
 #pragma endregion Info
 
 	xPos = margin;
-	switch (currentWindowRow2) {
-	case 0:
-		// textures
-#pragma region textures
-		// UI
-		if (showUI)
-		{
-			showVDUI();
-		}
-#pragma endregion textures
-		break;
-	case 1:
-		// Fbos
-#pragma region fbos
-		// UI
-		if (showUI)
-		{
-			showVDUI();
-		}		
-#pragma endregion fbos
-		break;
-	}
+	showVDUI(currentWindowRow2);
 }
 // UI
-void VideodrommLiveCodingApp::showVDUI() {
-	mVDUI->Run("UI");
+void VideodrommLiveCodingApp::showVDUI(unsigned int window) {
+	mVDUI->Run("UI", window);
 }
 
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
