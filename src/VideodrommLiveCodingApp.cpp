@@ -29,7 +29,7 @@ void VideodrommLiveCodingApp::setup()
 		// otherwise create a texture from scratch
 		mMixes.push_back(VDMix::create(mVDSettings, mVDAnimation));
 	}
-	// Console
+	// UI
 	mVDUI = VDUI::create(mVDSettings, mMixes[0]);
 
 	mVDAnimation->tapTempo();

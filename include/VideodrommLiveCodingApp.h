@@ -21,7 +21,6 @@
 // UI
 #include "VDUI.h"
 
-
 using namespace ci;
 using namespace ci::app;
 using namespace std;
