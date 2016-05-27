@@ -29,15 +29,15 @@ void VideodrommLiveCodingApp::setup()
 		// otherwise create a texture from scratch
 		mMixes.push_back(VDMix::create(mVDSettings, mVDAnimation));
 	}
-	// UI
-	mVDUI = VDUI::create(mVDSettings, mMixes[0]);
-
 	mVDAnimation->tapTempo();
 
 	mVDUtils->getWindowsResolution();
 
 	mVDSettings->iResolution.x = mVDSettings->mRenderWidth;
 	mVDSettings->iResolution.y = mVDSettings->mRenderHeight;
+	// UI
+	mVDUI = VDUI::create(mVDSettings, mMixes[0]);
+
 
 	// imgui
 	margin = 3;
