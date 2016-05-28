@@ -211,7 +211,7 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 	else if (ext == "png" || ext == "jpg") {
 		if (index < 1) index = 1;
 		if (index > 3) index = 3;
-		mMixes[0]->loadImageFile(mFile, 0, 0, true);
+		mMixes[0]->loadImageFile(mFile, 0, true);
 	}
 	else if (ext == "glsl") {
 		int rtn = mMixes[0]->loadFboFragmentShader(mFile, index);
