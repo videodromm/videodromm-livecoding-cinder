@@ -214,13 +214,14 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 		mMixes[0]->loadImageFile(mFile, 0, true);
 	}
 	else if (ext == "glsl") {
+		if (index > mMixes[0]->getFboCount() - 1) index = mMixes[0]->getFboCount() - 1;
 		int rtn = mMixes[0]->loadFboFragmentShader(mFile, index);
 		if (rtn > -1) {
 			// load success
 			// reset zoom
 			mVDAnimation->controlValues[22] = 1.0f;
 			// update text in editor
-			mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(0);
+			mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(index);
 			mShaderTextToLoad = true;
 		}
 	}
