@@ -23,4 +23,20 @@ echo Cinder-WebSocketPP
 git clone https://github.com/videodromm/Cinder-WebSocketPP ../../Cinder/blocks/Cinder-WebSocketPP
 echo Cinder-WebSocketPP
 git clone https://github.com/videodromm/assets ..
-cho Required dependencies checked out
+echo Required dependencies checked out
+echo Pull changes
+git pull
+cd ../../Cinder/blocks/Cinder-Hap2
+git pull
+cd ../Cinder-Videodromm
+git pull
+cd ../Cinder-Videodromm-Textures
+git pull
+cd ../Cinder-Videodromm-Fbos
+git pull
+cd ../Cinder-Videodromm-UI
+git pull
+cd ../Cinder-Videodromm-Router
+git pull
+
+
