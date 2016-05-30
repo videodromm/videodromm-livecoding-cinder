@@ -380,14 +380,26 @@ void VideodrommLiveCodingApp::draw()
 	aShader->uniform("iXorY", mVDSettings->iXorY);
 	aShader->uniform("iBadTv", mVDSettings->iBadTv);
 
-	mMixes[0]->getFboTexture(2)->bind(0);
-	mMixes[0]->getFboTexture(1)->bind(1);
+	if (mMixes[0]->isFboUsed()) {
+		mMixes[0]->getFboTexture(2)->bind(0);
+		mMixes[0]->getFboTexture(1)->bind(1);
+	}
+	else {
+		mMixes[0]->getInputTexture(1)->bind(0);
+		mMixes[0]->getInputTexture(2)->bind(1);
+	}
 
 	gl::drawSolidRect(Rectf(0, 0, mVDSettings->mFboWidth, mVDSettings->mFboHeight));
 	// stop drawing into the FBO
 	mFbo->unbindFramebuffer();
-	mMixes[0]->getFboTexture(1)->unbind();
-	mMixes[0]->getFboTexture(2)->unbind();
+	if (mMixes[0]->isFboUsed()) {
+		mMixes[0]->getFboTexture(1)->unbind();
+		mMixes[0]->getFboTexture(2)->unbind();
+	}
+	else {
+		mMixes[0]->getInputTexture(2)->unbind();
+		mMixes[0]->getInputTexture(1)->unbind();
+	}
 
 	gl::clear(Color::black());
 	gl::setMatricesWindow(toPixels(getWindowSize()));
