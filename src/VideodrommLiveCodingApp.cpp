@@ -20,7 +20,7 @@ void VideodrommLiveCodingApp::setup()
 	// Message router
 	mVDRouter = VDRouter::create(mVDSettings, mVDAnimation, mVDSession);
 	// Mix
-	mMixesFilepath = getAssetPath("") / "mixes.xml";
+	mMixesFilepath = getAssetPath("") / mVDSettings->mAssetsPath / "mixes.xml";
 	if (fs::exists(mMixesFilepath)) {
 		// load textures from file if one exists
 		mMixes = VDMix::readSettings(mVDSettings, mVDAnimation, loadFile(mMixesFilepath));
@@ -36,7 +36,7 @@ void VideodrommLiveCodingApp::setup()
 	mVDSettings->iResolution.x = mVDSettings->mRenderWidth;
 	mVDSettings->iResolution.y = mVDSettings->mRenderHeight;
 	// UI
-	mVDUI = VDUI::create(mVDSettings, mMixes[0]);
+	mVDUI = VDUI::create(mVDSettings, mMixes[0], mVDRouter, mVDAnimation);
 
 
 	// imgui
@@ -51,8 +51,8 @@ void VideodrommLiveCodingApp::setup()
 	largePreviewH = (mVDSettings->mPreviewHeight + margin) * 2.4;
 	displayHeight = mVDSettings->mMainWindowHeight - 50;
 	yPosRow1 = 18;
-	yPosRow2 = 500;
-	yPosRow3 = 600;
+	yPosRow2 = 200;
+	yPosRow3 = 300;
 
 	mouseGlobal = false;
 	removeUI = false;
@@ -420,8 +420,10 @@ void VideodrommLiveCodingApp::draw()
 				ImGui::MenuItem("live.frag");
 				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-			if (ImGui::MenuItem("Save As..")) {}
+			if (ImGui::MenuItem("Save", "Ctrl+S")) {
+				mVDSettings->save();
+			}
+			if (ImGui::MenuItem("Debug")) {}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Options"))
@@ -440,14 +442,117 @@ void VideodrommLiveCodingApp::draw()
 	static int currentWindowRow3 = 0;
 	static int selectedLeftInputTexture = 2;
 	static int selectedRightInputTexture = 1;
+#pragma region Info
 
 	xPos = margin;
-
-#pragma region Editor
+	ui::SetNextWindowSize(ImVec2(1000, 100), ImGuiSetCond_Once);
 	ui::SetNextWindowPos(ImVec2(xPos, yPosRow1), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(620, yPosRow2 - 40), ImGuiSetCond_FirstUseEver);
 	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	ui::Begin(buf);
+	{
+		ImGui::PushItemWidth(mVDSettings->mPreviewFboWidth);
+
+		ImGui::RadioButton("Textures", &currentWindowRow2, 0); ImGui::SameLine();
+		ImGui::RadioButton("Fbos", &currentWindowRow2, 1); ImGui::SameLine();
+		ImGui::RadioButton("Shaders", &currentWindowRow2, 2); ImGui::SameLine();
+
+		ImGui::RadioButton("Osc", &currentWindowRow3, 0); ImGui::SameLine();
+		ImGui::RadioButton("Midi", &currentWindowRow3, 1); ImGui::SameLine();
+		ImGui::RadioButton("Chn", &currentWindowRow3, 2); ui::SameLine();
+		ImGui::RadioButton("Blend", &currentWindowRow3, 3); ui::SameLine();
+
+		ui::SameLine();
+
+		ui::Text("Msg: %s", mVDSettings->mMsg.c_str());
+#pragma region Audio
+
+		if (ui::Button("x##spdx")) { mVDSettings->iSpeedMultiplier = 1.0; }
+		ui::SameLine();
+		ui::SliderFloat("speed x", &mVDSettings->iSpeedMultiplier, 0.01f, 5.0f, "%.1f");
+		ui::SameLine();
+		ui::Text("Beat %d ", mVDSettings->iBeat);
+		ui::SameLine();
+		ui::Text("Beat Idx %d ", mVDAnimation->iBeatIndex);
+		//ui::SameLine();
+		//ui::Text("Bar %d ", mVDAnimation->iBar);
+		ui::SameLine();
+
+		if (ui::Button("x##bpbx")) { mVDSession->iBeatsPerBar = 1; }
+		ui::SameLine();
+		ui::SliderInt("beats per bar", &mVDSession->iBeatsPerBar, 1, 8);
+
+		ui::SameLine();
+		ui::Text("Time %.2f", mVDSettings->iGlobalTime);
+		ui::SameLine();
+		ui::Text("Trk %s %.2f", mVDSettings->mTrackName.c_str(), mVDSettings->liveMeter);
+		//			ui::Checkbox("Playing", &mVDSettings->mIsPlaying);
+		ui::SameLine();
+
+		ui::Text("Tempo %.2f ", mVDSession->getBpm());
+		ui::Text("Target FPS %.2f ", mVDSession->getTargetFps());
+		ui::SameLine();
+		if (ui::Button("Tap tempo")) { mVDAnimation->tapTempo(); }
+		ui::SameLine();
+		if (ui::Button("Time tempo")) { mVDAnimation->mUseTimeWithTempo = !mVDAnimation->mUseTimeWithTempo; }
+		ui::SameLine();
+
+		//void Batchass::setTimeFactor(const int &aTimeFactor)
+		ui::SliderFloat("time x", &mVDAnimation->iTimeFactor, 0.0001f, 1.0f, "%.01f");
+		ui::SameLine();
+
+		static ImVector<float> timeValues; if (timeValues.empty()) { timeValues.resize(40); memset(&timeValues.front(), 0, timeValues.size()*sizeof(float)); }
+		static int timeValues_offset = 0;
+		// audio maxVolume
+		static float tRefresh_time = -1.0f;
+		if (ui::GetTime() > tRefresh_time + 1.0f / 20.0f)
+		{
+			tRefresh_time = ui::GetTime();
+			timeValues[timeValues_offset] = mVDAnimation->maxVolume;
+			timeValues_offset = (timeValues_offset + 1) % timeValues.size();
+		}
+
+		ui::SliderFloat("mult x", &mVDAnimation->controlValues[13], 0.01f, 40.0f);
+		ui::SameLine();
+		ui::PlotHistogram("Histogram", mVDAnimation->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
+		ui::SameLine();
+		/*if (mVDSettings->iDebug) {
+		CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)) + " " + toString(mVDAnimation->maxVolume));
+		}*/
+		if (mVDAnimation->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
+		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
+		if (mVDAnimation->maxVolume > 240.0) ui::PopStyleColor();
+		ui::SameLine();
+		// fps
+		static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
+		static int values_offset = 0;
+		static float refresh_time = -1.0f;
+		if (ui::GetTime() > refresh_time + 1.0f / 6.0f)
+		{
+			refresh_time = ui::GetTime();
+			values[values_offset] = mVDSettings->iFps;
+			values_offset = (values_offset + 1) % values.size();
+		}
+		if (mVDSettings->iFps < 12.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
+		ui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, mVDSettings->sFps.c_str(), 0.0f, mVDSession->getTargetFps(), ImVec2(0, 30));
+		if (mVDSettings->iFps < 12.0) ui::PopStyleColor();
+
+
+#pragma endregion Audio
+
+		ui::PopItemWidth();
+	}
+	ui::End();
+	xPos = margin;
+
+#pragma endregion Info
+	// UI Animation 
+	showVDUI(4);
+	xPos = largeW + margin;
+
+#pragma region Editor
+	ui::SetNextWindowPos(ImVec2(xPos, yPosRow2), ImGuiSetCond_Once);
+	ui::SetNextWindowSize(ImVec2(620, 400), ImGuiSetCond_FirstUseEver);
+	ui::Begin("Editor");
 	{
 		static bool read_only = false;
 
@@ -508,115 +613,7 @@ void VideodrommLiveCodingApp::draw()
 	}
 	ui::End();
 #pragma endregion Editor
-#pragma region Info
 
-	xPos = margin;
-	ui::SetNextWindowSize(ImVec2(1000, 200), ImGuiSetCond_Once);
-	ui::SetNextWindowPos(ImVec2(xPos, yPosRow3), ImGuiSetCond_Once);
-	ui::Begin("Info");
-	{
-		ImGui::PushItemWidth(mVDSettings->mPreviewFboWidth);
-
-		ImGui::RadioButton("Textures", &currentWindowRow2, 0); ImGui::SameLine();
-		ImGui::RadioButton("Fbos", &currentWindowRow2, 1); ImGui::SameLine();
-		ImGui::RadioButton("Shaders", &currentWindowRow2, 2); ImGui::SameLine();
-
-		ImGui::RadioButton("Osc", &currentWindowRow3, 0); ImGui::SameLine();
-		ImGui::RadioButton("Midi", &currentWindowRow3, 1); ImGui::SameLine();
-		ImGui::RadioButton("Chn", &currentWindowRow3, 2); ui::SameLine();
-		ImGui::RadioButton("Blend", &currentWindowRow3, 3); ui::SameLine();
-
-		if (ui::Button("Save Params"))
-		{
-			// save params
-			mVDSettings->save();
-		}
-		ui::SameLine();
-
-		ui::Text("Msg: %s", mVDSettings->mMsg.c_str());
-#pragma region Audio
-
-		if (ui::Button("x##spdx")) { mVDSettings->iSpeedMultiplier = 1.0; }
-		ui::SameLine();
-		ui::SliderFloat("speed x", &mVDSettings->iSpeedMultiplier, 0.01f, 5.0f, "%.1f");
-		ui::SameLine();
-		ui::Text("Beat %d ", mVDSettings->iBeat);
-		ui::SameLine();
-		ui::Text("Beat Idx %d ", mVDAnimation->iBeatIndex);
-		//ui::SameLine();
-		//ui::Text("Bar %d ", mVDAnimation->iBar);
-		ui::SameLine();
-
-		if (ui::Button("x##bpbx")) { mVDSession->iBeatsPerBar = 1; }
-		ui::SameLine();
-		ui::SliderInt("beats per bar", &mVDSession->iBeatsPerBar, 1, 8);
-
-		ui::SameLine();
-		ui::Text("Time %.2f", mVDSettings->iGlobalTime);
-		ui::SameLine();
-		ui::Text("Trk %s %.2f", mVDSettings->mTrackName.c_str(), mVDSettings->liveMeter);
-		//			ui::Checkbox("Playing", &mVDSettings->mIsPlaying);
-		ui::SameLine();
-		mVDSettings->iDebug ^= ui::Button("Debug");
-		ui::SameLine();
-
-		ui::Text("Tempo %.2f ", mVDSession->getBpm());
-		ui::Text("Target FPS %.2f ", mVDSession->getTargetFps());
-		ui::SameLine();
-		if (ui::Button("Tap tempo")) { mVDAnimation->tapTempo(); }
-		ui::SameLine();
-		if (ui::Button("Time tempo")) { mVDAnimation->mUseTimeWithTempo = !mVDAnimation->mUseTimeWithTempo; }
-		ui::SameLine();
-
-		//void Batchass::setTimeFactor(const int &aTimeFactor)
-		ui::SliderFloat("time x", &mVDAnimation->iTimeFactor, 0.0001f, 1.0f, "%.01f");
-		ui::SameLine();
-
-		static ImVector<float> timeValues; if (timeValues.empty()) { timeValues.resize(40); memset(&timeValues.front(), 0, timeValues.size()*sizeof(float)); }
-		static int timeValues_offset = 0;
-		// audio maxVolume
-		static float tRefresh_time = -1.0f;
-		if (ui::GetTime() > tRefresh_time + 1.0f / 20.0f)
-		{
-			tRefresh_time = ui::GetTime();
-			timeValues[timeValues_offset] = mVDAnimation->maxVolume;
-			timeValues_offset = (timeValues_offset + 1) % timeValues.size();
-		}
-
-		ui::SliderFloat("mult x", &mVDAnimation->controlValues[13], 0.01f, 40.0f);
-		ui::SameLine();
-		ui::PlotHistogram("Histogram", mVDAnimation->iFreqs, 7, 0, NULL, 0.0f, 255.0f, ImVec2(0, 30));// mMixes[0]->getSmallSpectrum()
-		ui::SameLine();
-		/*if (mVDSettings->iDebug) {
-			CI_LOG_V("maxvol:" + toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)) + " " + toString(mVDAnimation->maxVolume));
-			}*/
-		if (mVDAnimation->maxVolume > 240.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
-		ui::PlotLines("Volume", &timeValues.front(), (int)timeValues.size(), timeValues_offset, toString(mVDUtils->formatFloat(mVDAnimation->maxVolume)).c_str(), 0.0f, 255.0f, ImVec2(0, 30));
-		if (mVDAnimation->maxVolume > 240.0) ui::PopStyleColor();
-		ui::SameLine();
-		// fps
-		static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
-		static int values_offset = 0;
-		static float refresh_time = -1.0f;
-		if (ui::GetTime() > refresh_time + 1.0f / 6.0f)
-		{
-			refresh_time = ui::GetTime();
-			values[values_offset] = mVDSettings->iFps;
-			values_offset = (values_offset + 1) % values.size();
-		}
-		if (mVDSettings->iFps < 12.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
-		ui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, mVDSettings->sFps.c_str(), 0.0f, mVDSession->getTargetFps(), ImVec2(0, 30));
-		if (mVDSettings->iFps < 12.0) ui::PopStyleColor();
-
-
-#pragma endregion Audio
-
-		ui::PopItemWidth();
-	}
-	ui::End();
-	xPos = margin + 1000;
-
-#pragma endregion Info
 
 	xPos = margin;
 	showVDUI(currentWindowRow2);
