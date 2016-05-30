@@ -211,7 +211,7 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 	else if (ext == "png" || ext == "jpg") {
 		if (index < 1) index = 1;
 		if (index > 3) index = 3;
-		mMixes[0]->loadImageFile(mFile, 0, true);
+		mMixes[0]->loadImageFile(mFile, index, true);
 	}
 	else if (ext == "glsl") {
 		if (index > mMixes[0]->getFboCount() - 1) index = mMixes[0]->getFboCount() - 1;
@@ -380,14 +380,14 @@ void VideodrommLiveCodingApp::draw()
 	aShader->uniform("iXorY", mVDSettings->iXorY);
 	aShader->uniform("iBadTv", mVDSettings->iBadTv);
 
-	mMixes[0]->getFboTexture(0)->bind(0);
+	mMixes[0]->getFboTexture(2)->bind(0);
 	mMixes[0]->getFboTexture(1)->bind(1);
 
 	gl::drawSolidRect(Rectf(0, 0, mVDSettings->mFboWidth, mVDSettings->mFboHeight));
 	// stop drawing into the FBO
 	mFbo->unbindFramebuffer();
 	mMixes[0]->getFboTexture(1)->unbind();
-	mMixes[0]->getFboTexture(0)->unbind();
+	mMixes[0]->getFboTexture(2)->unbind();
 
 	gl::clear(Color::black());
 	gl::setMatricesWindow(toPixels(getWindowSize()));

@@ -9,12 +9,14 @@ echo Cinder-Videodromm-Fbos
 git clone https://github.com/videodromm/Cinder-Videodromm-Fbos ../../Cinder/blocks/Cinder-Videodromm-Fbos
 echo Cinder-Videodromm-UI
 git clone https://github.com/videodromm/Cinder-Videodromm-UI ../../Cinder/blocks/Cinder-Videodromm-UI
+echo Cinder-Videodromm-Router
+git clone https://github.com/videodromm/Cinder-Videodromm-Router ../../Cinder/blocks/Cinder-Videodromm-Router
 echo Cinder-Videodromm-Warps
 git clone https://github.com/videodromm/Cinder-Videodromm-Warps ../../Cinder/blocks/Cinder-Videodromm-Warps
 eecho Cinder-Warping
 git clone https://github.com/paulhoux/Cinder-Warping ../../Cinder/blocks/Cinder-Warping
 echo Cinder-ImGui
-git clone https://github.com/simongeilfus/Cinder-ImGui ../../Cinder/blocks/Cinder-ImGui
+git clone https://github.com/simongeilfus/Cinder-ImGui ../../Cinder/blocks/Cinder-ImGui --recursive
 echo Cinder-MIDI2
 git clone https://github.com/brucelane/Cinder-MIDI2 ../../Cinder/blocks/Cinder-MIDI2
 echo Cinder-WebSocketPP
