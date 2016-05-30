@@ -36,23 +36,7 @@ void VideodrommLiveCodingApp::setup()
 	mVDSettings->iResolution.x = mVDSettings->mRenderWidth;
 	mVDSettings->iResolution.y = mVDSettings->mRenderHeight;
 	// UI
-	mVDUI = VDUI::create(mVDSettings, mMixes[0], mVDRouter, mVDAnimation);
-
-
-	// imgui
-	margin = 3;
-	inBetween = 3;
-	// mPreviewFboWidth 80 mPreviewFboHeight 60 margin 10 inBetween 15 mPreviewWidth = 160;mPreviewHeight = 120;
-	w = mVDSettings->mPreviewFboWidth + margin;
-	h = mVDSettings->mPreviewFboHeight * 2.3;
-	largeW = (mVDSettings->mPreviewFboWidth + margin) * 4;
-	largeH = (mVDSettings->mPreviewFboHeight + margin) * 5;
-	largePreviewW = mVDSettings->mPreviewWidth + margin;
-	largePreviewH = (mVDSettings->mPreviewHeight + margin) * 2.4;
-	displayHeight = mVDSettings->mMainWindowHeight - 50;
-	yPosRow1 = 18;
-	yPosRow2 = 200;
-	yPosRow3 = 300;
+	mVDUI = VDUI::create(mVDSettings, mMixes[0], mVDRouter, mVDAnimation, mVDSession);
 
 	mouseGlobal = false;
 	removeUI = false;
@@ -194,7 +178,7 @@ void VideodrommLiveCodingApp::resizeWindow()
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
-	int index = (int)(event.getX() / (margin + w));// +1;
+	int index = (int)(event.getX() / (mVDSettings->uiElementWidth + mVDSettings->uiMargin));// +1;
 
 	string ext = "";
 	// use the last of the dropped files
@@ -255,7 +239,7 @@ void VideodrommLiveCodingApp::draw()
 		style.FramePadding = ImVec2(2, 2);
 		style.ItemSpacing = ImVec2(3, 3);
 		style.ItemInnerSpacing = ImVec2(3, 3);
-		style.WindowMinSize = ImVec2(w, mVDSettings->mPreviewFboHeight);
+		style.WindowMinSize = ImVec2(mVDSettings->uiLargeW, mVDSettings->mPreviewFboHeight);
 		// new style
 		style.Alpha = 1.0;
 		style.WindowFillAlphaDefault = 0.83;
@@ -444,9 +428,9 @@ void VideodrommLiveCodingApp::draw()
 	static int selectedRightInputTexture = 1;
 #pragma region Info
 
-	xPos = margin;
+	mVDSettings->uiXPos = mVDSettings->uiMargin;
 	ui::SetNextWindowSize(ImVec2(1000, 100), ImGuiSetCond_Once);
-	ui::SetNextWindowPos(ImVec2(xPos, yPosRow1), ImGuiSetCond_Once);
+	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPos, mVDSettings->uiYPosRow1), ImGuiSetCond_Once);
 	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
 	ui::Begin(buf);
 	{
@@ -542,16 +526,15 @@ void VideodrommLiveCodingApp::draw()
 		ui::PopItemWidth();
 	}
 	ui::End();
-	xPos = margin;
+	mVDSettings->uiXPos = mVDSettings->uiMargin;
 
 #pragma endregion Info
 	// UI Animation 
 	showVDUI(4);
-	xPos = largeW + margin;
 
 #pragma region Editor
-	ui::SetNextWindowPos(ImVec2(xPos, yPosRow2), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(620, 400), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
+	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW*2, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
 	ui::Begin("Editor");
 	{
 		static bool read_only = false;
@@ -579,7 +562,7 @@ void VideodrommLiveCodingApp::draw()
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
 		//if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, yPosRow2 - 140.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, mVDSettings->uiYPosRow2 - 140.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
 			// text changed
 			CI_LOG_V("text changed");
 			try
@@ -614,8 +597,6 @@ void VideodrommLiveCodingApp::draw()
 	ui::End();
 #pragma endregion Editor
 
-
-	xPos = margin;
 	showVDUI(currentWindowRow2);
 }
 // UI
