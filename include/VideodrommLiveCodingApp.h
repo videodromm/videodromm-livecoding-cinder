@@ -56,7 +56,7 @@ private:
 	VDAnimationRef				mVDAnimation;
 	// UI
 	VDUIRef						mVDUI;
-	void						showVDUI(unsigned int window);
+	void						showVDUI(unsigned int fps);
 
 	// Mix
 	VDMixList					mMixes;
@@ -70,8 +70,6 @@ private:
 	float						backcolor[4];
 	int							playheadPositions[12];
 	int							speeds[12];
-
-
 
 	float						f = 0.0f;
 	char						buf[64];

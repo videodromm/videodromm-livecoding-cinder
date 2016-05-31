@@ -124,10 +124,12 @@ void VideodrommLiveCodingApp::updateWindowTitle()
 void VideodrommLiveCodingApp::cleanup()
 {
 	CI_LOG_V("shutdown");
+	removeUI = true;
+	ui::disconnectWindow(getWindow());
+	ui::Shutdown();
 	// save settings
 	mVDSettings->save();
 	mVDSession->save();
-	ui::Shutdown();
 	quit();
 }
 void VideodrommLiveCodingApp::mouseDown(MouseEvent event)
@@ -405,6 +407,9 @@ void VideodrommLiveCodingApp::draw()
 				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Save", "Ctrl+S")) {
+				// save warp settings
+				//Warp::writeSettings(mWarps, writeFile("warps1.xml"));
+				// save params
 				mVDSettings->save();
 			}
 			if (ImGui::MenuItem("Debug")) {}
@@ -418,75 +423,10 @@ void VideodrommLiveCodingApp::draw()
 		if (ImGui::MenuItem("Quit", "Alt+F4")) { cleanup(); }
 		ImGui::EndMainMenuBar();
 	}
-
 #pragma endregion menu
 
-	static int currentWindowRow1 = 0;
-	static int currentWindowRow2 = 0;
-	static int currentWindowRow3 = 0;
-	static int selectedLeftInputTexture = 2;
-	static int selectedRightInputTexture = 1;
-#pragma region Info
-
-	mVDSettings->uiXPos = mVDSettings->uiMargin;
-	ui::SetNextWindowSize(ImVec2(1000, 100), ImGuiSetCond_Once);
-	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPos, mVDSettings->uiYPosRow1), ImGuiSetCond_Once);
-	sprintf(buf, "Videodromm Fps %c %d###fps", "|/-\\"[(int)(ui::GetTime() / 0.25f) & 3], (int)getAverageFps());
-	ui::Begin(buf);
-	{
-		ImGui::PushItemWidth(mVDSettings->mPreviewFboWidth);
-
-		ImGui::RadioButton("Audio", &currentWindowRow1, 0); ImGui::SameLine();
-		ImGui::RadioButton("Midi", &currentWindowRow1, 1); ImGui::SameLine();
-		ImGui::RadioButton("Chn", &currentWindowRow1, 2); ui::SameLine();
-		ImGui::RadioButton("Mouse", &currentWindowRow1, 3); ui::SameLine();
-		ImGui::RadioButton("Effects", &currentWindowRow1, 4); ui::SameLine();
-		ImGui::RadioButton("Color", &currentWindowRow1, 5); ui::SameLine();
-		ImGui::RadioButton("Tempo", &currentWindowRow1, 6); ui::SameLine();
-		ImGui::RadioButton("Blend", &currentWindowRow1, 7);
-
-		ImGui::RadioButton("Textures", &currentWindowRow2, 0); ImGui::SameLine();
-		ImGui::RadioButton("Fbos", &currentWindowRow2, 1); ImGui::SameLine();
-		ImGui::RadioButton("Shaders", &currentWindowRow2, 2); ImGui::SameLine();
-
-		ImGui::RadioButton("Osc", &currentWindowRow3, 0); ImGui::SameLine();
-		ImGui::RadioButton("Midi", &currentWindowRow3, 1); ImGui::SameLine();
-		ImGui::RadioButton("Chn", &currentWindowRow3, 2); ui::SameLine();
-		ImGui::RadioButton("Blend", &currentWindowRow3, 3); ui::SameLine();
-
-		ui::SameLine();
-
-		ui::Text("Msg: %s", mVDSettings->mMsg.c_str());
-
-		ui::Text("Target FPS %.2f ", mVDSession->getTargetFps());
-		ui::SameLine();
-
-		// fps
-		static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
-		static int values_offset = 0;
-		static float refresh_time = -1.0f;
-		if (ui::GetTime() > refresh_time + 1.0f / 6.0f)
-		{
-			refresh_time = ui::GetTime();
-			values[values_offset] = mVDSettings->iFps;
-			values_offset = (values_offset + 1) % values.size();
-		}
-		if (mVDSettings->iFps < 12.0) ui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
-		ui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, mVDSettings->sFps.c_str(), 0.0f, mVDSession->getTargetFps(), ImVec2(0, 30));
-		if (mVDSettings->iFps < 12.0) ui::PopStyleColor();
-
-#pragma region Audio
-#pragma endregion Audio
-
-		ui::PopItemWidth();
-	}
-	ui::End();
-	mVDSettings->uiXPos = mVDSettings->uiMargin;
-
-#pragma endregion Info
-	// UI Animation 
-	showVDUI(4);
-
+	showVDUI((int)getAverageFps());
+	
 #pragma region Editor
 	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
 	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW*2, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
@@ -552,11 +492,10 @@ void VideodrommLiveCodingApp::draw()
 	ui::End();
 #pragma endregion Editor
 
-	showVDUI(currentWindowRow2);
 }
 // UI
-void VideodrommLiveCodingApp::showVDUI(unsigned int window) {
-	mVDUI->Run("UI", window);
+void VideodrommLiveCodingApp::showVDUI(unsigned int fps) {
+	mVDUI->Run("UI", fps);
 }
 
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
