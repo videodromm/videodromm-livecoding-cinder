@@ -139,7 +139,9 @@ void VideodrommLiveCodingApp::positionRenderWindow()
 }
 void VideodrommLiveCodingApp::deleteRenderWindows()
 {
+#if defined( CINDER_MSW )
 	for (auto wRef : allRenderWindows) DestroyWindow((HWND)mRenderWindow->getNative());
+#endif
 	allRenderWindows.clear();
 }
 void VideodrommLiveCodingApp::update()
