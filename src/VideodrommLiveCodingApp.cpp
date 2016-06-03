@@ -464,7 +464,7 @@ void VideodrommLiveCodingApp::drawMain()
 	
 #pragma region Editor
 	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW*2, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW*2, mVDSettings->uiLargeH*2), ImGuiSetCond_FirstUseEver);
 	ui::Begin("Editor");
 	{
 		static bool read_only = false;
@@ -493,7 +493,7 @@ void VideodrommLiveCodingApp::drawMain()
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
 		//if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, mVDSettings->uiYPosRow2 - 140.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, mVDSettings->uiYPosRow2 - 200.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
 			// text changed
 			CI_LOG_V("text changed");
 			try
