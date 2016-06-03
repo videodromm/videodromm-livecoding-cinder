@@ -39,7 +39,8 @@ public:
 	void keyUp(KeyEvent event) override;
 	void fileDrop(FileDropEvent event) override;
 	void update() override;
-	void draw() override;
+	void drawMain();
+	void drawRender();
 	void cleanup() override;
 private:
 	// Settings
@@ -88,4 +89,17 @@ private:
 	string						mError;
 	// fbo
 	gl::FboRef					mFbo;
+	// windows
+	// windows
+	WindowRef					mMainWindow;
+	bool						mIsShutDown;
+	// render
+	void						createRenderWindow();
+	void						deleteRenderWindows();
+	vector<WindowRef>			allRenderWindows;
+	void						positionRenderWindow();
+	WindowRef					mRenderWindow;
+	// timeline
+	Anim<float>					mRenderWindowTimer;
+
 };
