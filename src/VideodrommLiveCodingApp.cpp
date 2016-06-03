@@ -351,6 +351,7 @@ void VideodrommLiveCodingApp::drawMain()
 	aShader->uniform("iMouse", vec4(mVDSettings->mRenderPosXY.x, mVDSettings->mRenderPosXY.y, mVDSettings->iMouse.z, mVDSettings->iMouse.z));//iMouse =  Vec3i( event.getX(), mRenderHeight - event.getY(), 1 );
 	aShader->uniform("iChannel0", 0);
 	aShader->uniform("iChannel1", 1);
+	aShader->uniform("iChannel2", 2);
 	aShader->uniform("iAudio0", 0);
 	aShader->uniform("iFreq0", mVDAnimation->iFreqs[0]);
 	aShader->uniform("iFreq1", mVDAnimation->iFreqs[1]);
@@ -408,8 +409,11 @@ void VideodrommLiveCodingApp::drawMain()
 		mMixes[0]->getFboTexture(1)->bind(1);
 	}
 	else {
-		mMixes[0]->getInputTexture(1)->bind(0);
-		mMixes[0]->getInputTexture(2)->bind(1);
+		for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(); t++) {
+			mMixes[0]->getInputTexture(t)->bind(t);
+		}
+		//mMixes[0]->getInputTexture(1)->bind(0);
+		//mMixes[0]->getInputTexture(2)->bind(1);
 	}
 
 	gl::drawSolidRect(Rectf(0, 0, mVDSettings->mFboWidth, mVDSettings->mFboHeight));
@@ -420,8 +424,11 @@ void VideodrommLiveCodingApp::drawMain()
 		mMixes[0]->getFboTexture(2)->unbind();
 	}
 	else {
-		mMixes[0]->getInputTexture(2)->unbind();
-		mMixes[0]->getInputTexture(1)->unbind();
+		for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(); t++) {
+			mMixes[0]->getInputTexture(t)->unbind();
+		}
+		//mMixes[0]->getInputTexture(2)->unbind();
+		//mMixes[0]->getInputTexture(1)->unbind();
 	}
 
 	gl::clear(Color::black());
@@ -476,6 +483,7 @@ void VideodrommLiveCodingApp::drawMain()
 			"uniform float iGlobalTime;\n"
 			"uniform sampler2D iChannel0;\n"
 			"uniform sampler2D iChannel1;\n"
+			"uniform sampler2D iChannel2;\n"
 			"uniform vec3 spectrum;\n"
 			"\n"
 			"out vec4 oColor;\n"
@@ -483,6 +491,7 @@ void VideodrommLiveCodingApp::drawMain()
 			"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
 			"\tvec4 t0 = texture2D(iChannel0, uv);\n"
 			"\tvec4 t1 = texture2D(iChannel1, uv);\n"
+			"\tvec4 t2 = texture2D(iChannel2, uv);\n"
 			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
 			"}\n";
 		if (mShaderTextToLoad) {
