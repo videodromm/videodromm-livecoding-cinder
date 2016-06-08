@@ -496,9 +496,9 @@ void VideodrommLiveCodingApp::drawMain()
 			"out vec4 oColor;\n"
 			"void main(void) {\n"
 			"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
-			"\tvec4 t0 = texture2D(iChannel0, uv);\n"
-			"\tvec4 t1 = texture2D(iChannel1, uv);\n"
-			"\tvec4 t2 = texture2D(iChannel2, uv);\n"
+			"\tvec4 t0 = texture(iChannel0, uv);\n"
+			"\tvec4 t1 = texture(iChannel1, uv);\n"
+			"\tvec4 t2 = texture(iChannel2, uv);\n"
 			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
 			"}\n";
 		if (mShaderTextToLoad) {
