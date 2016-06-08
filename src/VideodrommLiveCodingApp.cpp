@@ -161,7 +161,7 @@ void VideodrommLiveCodingApp::update()
 }
 void VideodrommLiveCodingApp::updateWindowTitle()
 {
-	if (!mIsShutDown) getWindow()->setTitle(mVDSettings->sFps + " fps Live Coding");
+	if (!mIsShutDown && mMainWindow) mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
 }
 void VideodrommLiveCodingApp::cleanup()
 {
