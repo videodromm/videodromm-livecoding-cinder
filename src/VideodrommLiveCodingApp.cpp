@@ -152,6 +152,11 @@ void VideodrommLiveCodingApp::update()
 	mVDAnimation->update();
 	mVDRouter->update();
 
+	if (mVDSettings->shaderEditIndex != 0) {
+		mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(mVDSettings->shaderEditIndex);
+		mShaderTextToLoad = true;
+		mVDSettings->shaderEditIndex = 0;
+	}
 	updateWindowTitle();
 }
 void VideodrommLiveCodingApp::updateWindowTitle()
