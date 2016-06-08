@@ -503,7 +503,6 @@ void VideodrommLiveCodingApp::drawMain()
 		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
-		//if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, ui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
 		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, mVDSettings->uiYPosRow2 - 200.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
 			// text changed
 			CI_LOG_V("text changed");
