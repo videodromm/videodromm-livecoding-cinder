@@ -161,7 +161,7 @@ void VideodrommLiveCodingApp::update()
 }
 void VideodrommLiveCodingApp::updateWindowTitle()
 {
-	if (!mIsShutDown && mMainWindow) mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
+	//mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
 }
 void VideodrommLiveCodingApp::cleanup()
 {
@@ -281,6 +281,7 @@ void VideodrommLiveCodingApp::drawRender()
 
 void VideodrommLiveCodingApp::drawMain()
 {
+	mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
 	ImGuiStyle& style = ui::GetStyle();
 	if (mIsResizing) {
 		mIsResizing = false;
@@ -475,10 +476,10 @@ void VideodrommLiveCodingApp::drawMain()
 #pragma endregion menu
 
 	showVDUI((int)getAverageFps());
-	
+
 #pragma region Editor
 	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW*2, mVDSettings->uiLargeH*2), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 2, mVDSettings->uiLargeH * 2), ImGuiSetCond_FirstUseEver);
 	ui::Begin("Editor");
 	{
 		static bool read_only = false;
@@ -508,6 +509,7 @@ void VideodrommLiveCodingApp::drawMain()
 		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
+		ui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "uniform");
 		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, mVDSettings->uiYPosRow2 - 200.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
 			// text changed
 			CI_LOG_V("text changed");
