@@ -484,7 +484,7 @@ void VideodrommLiveCodingApp::drawMain()
 	{
 		static bool read_only = false;
 
-		size_t const MAX = 16384; // maximum number of chars
+		size_t const MAX = 32768; // maximum number of chars
 		static char mShaderText[MAX] =
 			"uniform vec3 iResolution;\n"
 			"uniform vec3 iColor;\n"
