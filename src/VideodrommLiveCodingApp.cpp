@@ -238,8 +238,6 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 		mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(index);
 		mShaderTextToLoad = true;
 	}
-
-
 }
 
 void VideodrommLiveCodingApp::drawRender()
@@ -493,7 +491,6 @@ void VideodrommLiveCodingApp::drawMain()
 				sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
 				mVDRouter->wsWrite(sParams.str());
 				//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
-
 				mError = "";
 			}
 			catch (gl::GlslProgCompileExc &exc)
