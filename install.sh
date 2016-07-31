@@ -16,8 +16,17 @@ git clone https://github.com/videodromm/assets ..
 echo Required dependencies checked out
 echo Pull changes
 git pull
+cd ../assets
+git pull
 cd ../../Cinder/blocks/Cinder-Hap2
 git pull
 cd ../Cinder-Videodromm
 git pull
-
+cd ../Cinder-Videodromm-Textures
+git pull
+cd ../Cinder-Videodromm-Shaders
+git pull
+cd ../Cinder-Videodromm-Fbos
+git pull
+cd ../Cinder-Videodromm-Warps
+git pull
