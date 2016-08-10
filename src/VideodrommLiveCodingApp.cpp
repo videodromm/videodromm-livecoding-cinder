@@ -108,7 +108,7 @@ void VideodrommLiveCodingApp::setup()
 	mMainWindow = getWindow();
 	mMainWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawMain, this));
 	mMainWindow->getSignalResize().connect(std::bind(&VideodrommLiveCodingApp::resizeWindow, this));
-	createRenderWindow();
+	if (mVDSettings->mStandalone) createRenderWindow();
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
@@ -148,7 +148,7 @@ void VideodrommLiveCodingApp::update()
 {
 	mVDSettings->iFps = getAverageFps();
 	mVDSettings->sFps = toString(floor(mVDSettings->iFps));
-
+	mMixes[0]->update();
 	mVDAnimation->update();
 	mVDRouter->update();
 
