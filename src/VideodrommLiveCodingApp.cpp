@@ -417,16 +417,7 @@ void VideodrommLiveCodingApp::drawMain()
 	if (removeUI) return;
 #pragma region menu
 	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Save", "Ctrl+S")) {
-				// save warp settings
-				//Warp::writeSettings(mWarps, writeFile("warps1.xml"));
-				// save params
-				mVDSettings->save();
-			}
-			ImGui::EndMenu();
-		}
+		
 		if (ImGui::BeginMenu("Window"))
 		{
 			if (ImGui::MenuItem("Create", "Ctrl+W")) { createRenderWindow(); }
@@ -441,6 +432,7 @@ void VideodrommLiveCodingApp::drawMain()
 		if (ImGui::MenuItem("Quit", "Alt+F4")) { cleanup(); }
 		ImGui::EndMainMenuBar();
 	}
+    
 #pragma endregion menu
 
 	showVDUI((int)getAverageFps());
