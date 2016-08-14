@@ -3,6 +3,8 @@
 void VideodrommLiveCodingApp::prepare(Settings *settings)
 {
 	settings->setWindowSize(1024, 768);
+	settings->setBorderless();
+	settings->setWindowPos(0, 0);
 }
 void VideodrommLiveCodingApp::setup()
 {
@@ -32,6 +34,7 @@ void VideodrommLiveCodingApp::setup()
 	mVDAnimation->tapTempo();
 
 	mVDUtils->getWindowsResolution();
+	setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
 
 	mVDSettings->iResolution.x = mVDSettings->mRenderWidth;
 	mVDSettings->iResolution.y = mVDSettings->mRenderHeight;
@@ -243,8 +246,10 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 void VideodrommLiveCodingApp::drawRender()
 {
 	gl::clear(Color::black());
-	gl::setMatricesWindow(toPixels(getWindowSize()));
-	gl::draw(mFbo->getColorTexture(), getWindowBounds());
+	//gl::setMatricesWindow(toPixels(getWindowSize()));
+	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
+	// live coding fbo gl::draw(mFbo->getColorTexture(), getWindowBounds());
+	gl::draw(mMixes[0]->getTexture(), getWindowBounds());
 }
 
 void VideodrommLiveCodingApp::drawMain()
@@ -306,11 +311,11 @@ void VideodrommLiveCodingApp::drawMain()
 		style.Colors[ImGuiCol_TooltipBg] = ImVec4(0.65f, 0.25f, 0.25f, 1.00f);
 #pragma endregion style
 	}
-	gl::clear(Color::black());
-	gl::color(Color::white());
-	gl::setMatricesWindow(mVDSettings->mMainWindowWidth, mVDSettings->mMainWindowHeight, false);
 
-#pragma region draw
+#pragma region drawfbo
+	/*gl::clear(Color::black());
+	gl::color(Color::white());
+	gl::setMatricesWindow(mVDSettings->mMainWindowWidth, mVDSettings->mMainWindowHeight, false);*/
 	// draw using the mix shader
 	mFbo->bindFramebuffer();
 	//gl::setViewport(mVDFbos[mVDSettings->mMixFboIndex].fbo.getBounds());
@@ -406,13 +411,24 @@ void VideodrommLiveCodingApp::drawMain()
 		//mMixes[0]->getInputTexture(2)->unbind();
 		//mMixes[0]->getInputTexture(1)->unbind();
 	}
+#pragma endregion drawfbo
 
 	gl::clear(Color::black());
-	gl::setMatricesWindow(toPixels(getWindowSize()));
+	//	gl::setMatricesWindow(toPixels(getWindowSize()));
+	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
 	gl::draw(mFbo->getColorTexture(), getWindowBounds());
 
-#pragma endregion draw
 
+	for (size_t m = 0; m < mMixes[0]->getMixFbosCount() - 1; m++)
+	{
+		i = 64 * m;
+		gl::draw(mMixes[0]->getTexture(m), Rectf(0 + i, 256, 64 + i, 320));
+	}
+	for (size_t b = 0; b < mMixes[0]->getBlendFbosCount() - 1; b++)
+	{
+		j = 64 * b;
+		gl::draw(mMixes[0]->getFboThumb(b), Rectf(0 + j, 0, 64 + j, 128));
+	}
 	// imgui
 	if (removeUI) return;
 #pragma region menu
@@ -439,7 +455,7 @@ void VideodrommLiveCodingApp::drawMain()
 
 #pragma region Editor
 	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 2, mVDSettings->uiLargeH * 2), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 2, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
 	ui::Begin("Editor");
 	{
 		static bool read_only = false;

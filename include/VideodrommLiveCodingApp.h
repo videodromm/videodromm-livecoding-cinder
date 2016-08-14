@@ -74,6 +74,7 @@ private:
 
 	float						f = 0.0f;
 	char						buf[64];
+	unsigned int				i, j;
 
 	bool						mouseGlobal;
 	bool						removeUI;
@@ -89,7 +90,6 @@ private:
 	string						mError;
 	// fbo
 	gl::FboRef					mFbo;
-	// windows
 	// windows
 	WindowRef					mMainWindow;
 	bool						mIsShutDown;
