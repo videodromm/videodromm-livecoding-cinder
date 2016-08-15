@@ -416,9 +416,9 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::clear(Color::black());
 	//	gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	gl::draw(mFbo->getColorTexture(), getWindowBounds());
+	//gl::draw(mFbo->getColorTexture(), getWindowBounds());
 
-
+/*
 	for (size_t m = 0; m < mMixes[0]->getMixFbosCount() - 1; m++)
 	{
 		i = 64 * m;
@@ -428,7 +428,7 @@ void VideodrommLiveCodingApp::drawMain()
 	{
 		j = 64 * b;
 		gl::draw(mMixes[0]->getFboThumb(b), Rectf(0 + j, 0, 64 + j, 128));
-	}
+	}*/
 	// imgui
 	if (removeUI) return;
 #pragma region menu
@@ -455,7 +455,7 @@ void VideodrommLiveCodingApp::drawMain()
 
 #pragma region Editor
 	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 2, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
+	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 3, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
 	ui::Begin("Editor");
 	{
 		static bool read_only = false;
@@ -486,8 +486,8 @@ void VideodrommLiveCodingApp::drawMain()
 		ui::Checkbox("Read-only", &read_only);
 		ui::PopStyleVar();
 		ui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "uniform");
-		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, mVDSettings->uiYPosRow2 - 200.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-			// text changed
+		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+			// text changed // TODO height ? mVDSettings->uiYPosRow2 - 200.0f
 			CI_LOG_V("text changed");
 			try
 			{
