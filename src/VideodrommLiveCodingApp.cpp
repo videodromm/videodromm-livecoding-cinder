@@ -421,7 +421,11 @@ void VideodrommLiveCodingApp::drawMain()
 		i = 64 * m;
 		gl::draw(mMixes[0]->getTexture(m), Rectf(0 + i, 256, 64 + i, 320));
 	}
-	*/
+	for (size_t b = 0; b < mMixes[0]->getBlendFbosCount() - 1; b++)
+	{
+		j = 64 * b;
+		gl::draw(mMixes[0]->getFboThumb(b), Rectf(0 + j, 0, 64 + j, 128));
+	}*/
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
 #pragma region menu
@@ -506,7 +510,7 @@ void VideodrommLiveCodingApp::drawMain()
 			}
 		}
 		else {
-			// nothing changed
+			// nothing changed 
 		}
 		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
 	}
