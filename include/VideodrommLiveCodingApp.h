@@ -42,6 +42,7 @@ public:
 	void drawMain();
 	void drawRender();
 	void cleanup() override;
+	void setUIVisibility(bool visible);
 private:
 	// Settings
 	VDSettingsRef				mVDSettings;
@@ -77,7 +78,7 @@ private:
 	unsigned int				i, j;
 
 	bool						mouseGlobal;
-	bool						removeUI;
+	//bool						removeUI;
 	// shader
 	gl::GlslProgRef				aShader;
 	// boolean to update the editor text

@@ -42,15 +42,10 @@ void VideodrommLiveCodingApp::setup()
 	mVDUI = VDUI::create(mVDSettings, mMixes[0], mVDRouter, mVDAnimation, mVDSession);
 
 	mouseGlobal = false;
-	removeUI = false;
+
 	static float f = 0.0f;
-	// mouse cursor
-	if (mVDSettings->mCursorVisible) {
-		showCursor();
-	}
-	else {
-		hideCursor();
-	}
+	// mouse cursor and UI
+	setUIVisibility(mVDSettings->mCursorVisible);
 	// load vertex shader 
 	try
 	{
@@ -147,6 +142,17 @@ void VideodrommLiveCodingApp::deleteRenderWindows()
 #endif
 	allRenderWindows.clear();
 }
+void VideodrommLiveCodingApp::setUIVisibility(bool visible)
+{
+	if (visible)
+	{
+		showCursor();
+	}
+	else
+	{
+		hideCursor();
+	}
+}
 void VideodrommLiveCodingApp::update()
 {
 	mVDSettings->iFps = getAverageFps();
@@ -172,7 +178,6 @@ void VideodrommLiveCodingApp::cleanup()
 	{
 		mIsShutDown = true;
 		CI_LOG_V("shutdown");
-		removeUI = true;
 		ui::disconnectWindow(getWindow());
 		ui::Shutdown();
 		// save settings
@@ -199,18 +204,10 @@ void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 		case KeyEvent::KEY_l:
 			mVDAnimation->load();
 			break;
-		case KeyEvent::KEY_c:
+		case KeyEvent::KEY_h:
 			// mouse cursor
 			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
-			if (mVDSettings->mCursorVisible) {
-				hideCursor();
-			}
-			else {
-				showCursor();
-			}
-			break;
-		case KeyEvent::KEY_h:
-			removeUI = !removeUI;
+			setUIVisibility(mVDSettings->mCursorVisible);
 			break;
 		}
 	}
@@ -430,7 +427,7 @@ void VideodrommLiveCodingApp::drawMain()
 		gl::draw(mMixes[0]->getFboThumb(b), Rectf(0 + j, 0, 64 + j, 128));
 	}*/
 	// imgui
-	if (removeUI) return;
+	if (!mVDSettings->mCursorVisible) return;
 #pragma region menu
 	if (ImGui::BeginMainMenuBar()) {
 		
