@@ -74,10 +74,16 @@
       <UniqueIdentifier>{59C26F2F-1195-4BDF-954C-668343D8D8AA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Blocks\OSC">
-      <UniqueIdentifier>{E038046A-7806-458A-AC56-45D8431BD158}</UniqueIdentifier>
+      <UniqueIdentifier>{37F54B2C-350A-473A-BC21-DEFD356C03FE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Blocks\OSC\src">
-      <UniqueIdentifier>{EFAAE2BE-06AF-4333-945B-81D92BB884C9}</UniqueIdentifier>
+      <UniqueIdentifier>{8347665A-68C4-4FC1-AA23-BF5446E55AFF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\OSC\src\cinder">
+      <UniqueIdentifier>{28FFE447-1B1E-47A6-AE01-9D2FA8353BDC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\OSC\src\cinder\osc">
+      <UniqueIdentifier>{1CA0AA3A-C372-40FE-ACA9-B57759ECC5F6}</UniqueIdentifier>
     </Filter>
     <Filter Include="debug">
       <UniqueIdentifier>{0764f060-4f70-444b-a598-8b76ced771bc}</UniqueIdentifier>
@@ -354,11 +360,11 @@
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-WebSocketPP\src\WebSocketServer.h">
       <Filter>Blocks\Cinder-WebSocketPP\src</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\..\Cinder\blocks\OSC\src\Osc.cpp">
-      <Filter>Blocks\OSC\src</Filter>
+    <ClCompile Include="..\..\..\Cinder\blocks\OSC\src\cinder\osc\Osc.cpp">
+      <Filter>Blocks\OSC\src\cinder\osc</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\..\Cinder\blocks\OSC\src\Osc.h">
-      <Filter>Blocks\OSC\src</Filter>
+    <ClInclude Include="..\..\..\Cinder\blocks\OSC\src\cinder\osc\Osc.h">
+      <Filter>Blocks\OSC\src\cinder\osc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
