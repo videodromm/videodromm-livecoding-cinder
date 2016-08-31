@@ -221,9 +221,7 @@ void VideodrommLiveCodingApp::keyUp(KeyEvent event)
 }
 void VideodrommLiveCodingApp::resizeWindow()
 {
-	mIsResizing = true;
-	// disconnect ui window and io events callbacks
-	ui::disconnectWindow(getWindow());
+	mVDUI->resize();
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
@@ -252,61 +250,6 @@ void VideodrommLiveCodingApp::drawRender()
 void VideodrommLiveCodingApp::drawMain()
 {
 	mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
-	ImGuiStyle& style = ui::GetStyle();
-	if (mIsResizing) {
-		mIsResizing = false;
-		// set ui window and io events callbacks 
-		ui::connectWindow(getWindow());
-		ui::initialize();
-
-#pragma region style
-		// our theme variables
-		ImGuiStyle& style = ui::GetStyle();
-		style.WindowRounding = 4;
-		style.WindowPadding = ImVec2(3, 3);
-		style.FramePadding = ImVec2(2, 2);
-		style.ItemSpacing = ImVec2(3, 3);
-		style.ItemInnerSpacing = ImVec2(3, 3);
-		style.WindowMinSize = ImVec2(mVDSettings->mPreviewFboWidth, mVDSettings->mPreviewFboHeight);
-		style.Alpha = 0.6f;
-		style.Colors[ImGuiCol_Text] = ImVec4(0.89f, 0.92f, 0.94f, 1.00f);
-		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
-		style.Colors[ImGuiCol_Border] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
-		style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.38f);
-		style.Colors[ImGuiCol_FrameBg] = ImVec4(0.18f, 0.18f, 0.18f, 1.00f);
-		style.Colors[ImGuiCol_TitleBg] = ImVec4(0.4f, 0.0f, 0.21f, 1.00f);
-		style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.17f, 0.17f, 0.17f, 1.00f);
-		style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.97f, 0.0f, 0.17f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.26f, 0.26f, 0.26f, 1.00f);
-		style.Colors[ImGuiCol_ComboBg] = ImVec4(0.13f, 0.13f, 0.13f, 1.00f);
-		style.Colors[ImGuiCol_CheckMark] = ImVec4(0.99f, 0.22f, 0.22f, 0.50f);
-		style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.65f, 0.25f, 0.25f, 1.00f);
-		style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.8f, 0.35f, 0.35f, 1.00f);
-		style.Colors[ImGuiCol_Button] = ImVec4(0.17f, 0.17f, 0.17f, 1.00f);
-		style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
-		style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
-		style.Colors[ImGuiCol_Header] = ImVec4(0.11f, 0.11f, 0.11f, 1.00f);
-		style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-		style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
-		style.Colors[ImGuiCol_Column] = ImVec4(0.04f, 0.04f, 0.04f, 0.22f);
-		style.Colors[ImGuiCol_ColumnHovered] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-		style.Colors[ImGuiCol_ColumnActive] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
-		style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.65f, 0.25f, 0.25f, 1.00f);
-		style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.8f, 0.35f, 0.35f, 1.00f);
-		style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.9f, 0.45f, 0.45f, 1.00f);
-		style.Colors[ImGuiCol_CloseButton] = ImVec4(0.28f, 0.28f, 0.28f, 1.00f);
-		style.Colors[ImGuiCol_CloseButtonHovered] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-		style.Colors[ImGuiCol_CloseButtonActive] = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
-		style.Colors[ImGuiCol_PlotLines] = ImVec4(0.65f, 0.25f, 0.25f, 1.00f);
-		style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.8f, 0.35f, 0.35f, 1.00f);
-		style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.65f, 0.25f, 0.25f, 1.00f);
-		style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.8f, 0.35f, 0.35f, 1.00f);
-		style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-#pragma endregion style
-	}
 
 #pragma region drawfbo
 	/*gl::clear(Color::black());
@@ -414,112 +357,91 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
 	//gl::draw(mFbo->getColorTexture(), getWindowBounds());
 
-/*
-	for (size_t m = 0; m < mMixes[0]->getMixFbosCount() - 1; m++)
-	{
+	/*
+		for (size_t m = 0; m < mMixes[0]->getMixFbosCount() - 1; m++)
+		{
 		i = 64 * m;
 		gl::draw(mMixes[0]->getTexture(m), Rectf(0 + i, 256, 64 + i, 320));
-	}
-	for (size_t b = 0; b < mMixes[0]->getBlendFbosCount() - 1; b++)
-	{
+		}
+		for (size_t b = 0; b < mMixes[0]->getBlendFbosCount() - 1; b++)
+		{
 		j = 64 * b;
 		gl::draw(mMixes[0]->getFboThumb(b), Rectf(0 + j, 0, 64 + j, 128));
-	}*/
+		}*/
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
-#pragma region menu
-	if (ImGui::BeginMainMenuBar()) {
-		
-		if (ImGui::BeginMenu("Window"))
-		{
-			if (ImGui::MenuItem("Create", "Ctrl+W")) { createRenderWindow(); }
-			if (ImGui::MenuItem("Delete", "Ctrl+D")) { deleteRenderWindows(); }
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Options"))
-		{
-			ImGui::DragFloat("Global Alpha", &style.Alpha, 0.005f, 0.20f, 1.0f, "%.2f");
-			ImGui::EndMenu();
-		}
-		if (ImGui::MenuItem("Quit", "Alt+F4")) { cleanup(); }
-		ImGui::EndMainMenuBar();
-	}
-    
-#pragma endregion menu
 
-	showVDUI((int)getAverageFps());
+	mVDUI->Run("UI", (int)getAverageFps());
+	if (mVDUI->isReady()) {
 
 #pragma region Editor
-	ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
-	ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 3, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
-	ui::Begin("Editor");
-	{
-		static bool read_only = false;
+		ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
+		ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 3, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
+		ui::Begin("Editor");
+		{
+			static bool read_only = false;
 
-		size_t const MAX = 32768; // maximum number of chars
-		static char mShaderText[MAX] =
-			"uniform vec3 iResolution;\n"
-			"uniform vec3 iColor;\n"
-			"uniform float iGlobalTime;\n"
-			"uniform sampler2D iChannel0;\n"
-			"uniform sampler2D iChannel1;\n"
-			"uniform sampler2D iChannel2;\n"
-			"uniform vec3 spectrum;\n"
-			"\n"
-			"out vec4 oColor;\n"
-			"void main(void) {\n"
-			"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
-			"\tvec4 t0 = texture(iChannel0, uv);\n"
-			"\tvec4 t1 = texture(iChannel1, uv);\n"
-			"\tvec4 t2 = texture(iChannel2, uv);\n"
-			"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
-			"}\n";
-		if (mShaderTextToLoad) {
-			mShaderTextToLoad = false;
-			std::copy(mFboTextureFragmentShaderString.begin(), (mFboTextureFragmentShaderString.size() >= MAX ? mFboTextureFragmentShaderString.begin() + MAX : mFboTextureFragmentShaderString.end()), mShaderText);
-		}
-		ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-		ui::Checkbox("Read-only", &read_only);
-		ui::PopStyleVar();
-		ui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "uniform");
-		if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
-			// text changed // TODO height ? mVDSettings->uiYPosRow2 - 200.0f
-			CI_LOG_V("text changed");
-			try
-			{
-				aShader = gl::GlslProg::create(mPassthruVextexShaderString, mShaderText);
-				aShader->setLabel("live");
-				CI_LOG_V("live.frag loaded and compiled");
-				mFboTextureFragmentShaderString = mShaderText;
-				stringstream sParams;
-				sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
-				mVDRouter->wsWrite(sParams.str());
-				//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
-				mError = "";
+			size_t const MAX = 32768; // maximum number of chars
+			static char mShaderText[MAX] =
+				"uniform vec3 iResolution;\n"
+				"uniform vec3 iColor;\n"
+				"uniform float iGlobalTime;\n"
+				"uniform sampler2D iChannel0;\n"
+				"uniform sampler2D iChannel1;\n"
+				"uniform sampler2D iChannel2;\n"
+				"uniform vec3 spectrum;\n"
+				"\n"
+				"out vec4 oColor;\n"
+				"void main(void) {\n"
+				"\tvec2 uv = gl_FragCoord.xy / iResolution.xy;\n"
+				"\tvec4 t0 = texture(iChannel0, uv);\n"
+				"\tvec4 t1 = texture(iChannel1, uv);\n"
+				"\tvec4 t2 = texture(iChannel2, uv);\n"
+				"\toColor = vec4(t0.x, t1.y, cos(iGlobalTime), 1.0);\n"
+				"}\n";
+			if (mShaderTextToLoad) {
+				mShaderTextToLoad = false;
+				std::copy(mFboTextureFragmentShaderString.begin(), (mFboTextureFragmentShaderString.size() >= MAX ? mFboTextureFragmentShaderString.begin() + MAX : mFboTextureFragmentShaderString.end()), mShaderText);
 			}
-			catch (gl::GlslProgCompileExc &exc)
-			{
-				mError = string(exc.what());
-				CI_LOG_V("unable to load/compile live fragment shader:" + string(exc.what()));
+			ui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+			ui::Checkbox("Read-only", &read_only);
+			ui::PopStyleVar();
+			ui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "uniform");
+			if (ui::InputTextMultiline("##source", mShaderText, IM_ARRAYSIZE(mShaderText), ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0))) {
+				// text changed // TODO height ? mVDSettings->uiYPosRow2 - 200.0f
+				CI_LOG_V("text changed");
+				try
+				{
+					aShader = gl::GlslProg::create(mPassthruVextexShaderString, mShaderText);
+					aShader->setLabel("live");
+					CI_LOG_V("live.frag loaded and compiled");
+					mFboTextureFragmentShaderString = mShaderText;
+					stringstream sParams;
+					sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
+					mVDRouter->wsWrite(sParams.str());
+					//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
+					mError = "";
+				}
+				catch (gl::GlslProgCompileExc &exc)
+				{
+					mError = string(exc.what());
+					CI_LOG_V("unable to load/compile live fragment shader:" + string(exc.what()));
+				}
+				catch (const std::exception &e)
+				{
+					mError = string(e.what());
+					CI_LOG_V("unable to load live fragment shader:" + string(e.what()));
+				}
 			}
-			catch (const std::exception &e)
-			{
-				mError = string(e.what());
-				CI_LOG_V("unable to load live fragment shader:" + string(e.what()));
+			else {
+				// nothing changed 
 			}
+			ui::TextColored(ImColor(255, 0, 0), mError.c_str());
 		}
-		else {
-			// nothing changed 
-		}
-		ui::TextColored(ImColor(255, 0, 0), mError.c_str());
-	}
-	ui::End();
+		ui::End();
 #pragma endregion Editor
+	}
 
-}
-// UI
-void VideodrommLiveCodingApp::showVDUI(unsigned int fps) {
-	mVDUI->Run("UI", fps);
 }
 
 CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
