@@ -47,30 +47,30 @@ void VideodrommLiveCodingApp::setup()
 	// mouse cursor and UI
 	setUIVisibility(mVDSettings->mCursorVisible);
 	// load vertex shader 
-	try
-	{
-		fs::path vertexFile = getAssetPath("") / "passthru.vert";
-		if (fs::exists(vertexFile)) {
-			mPassthruVextexShaderString = loadString(loadAsset("passthru.vert"));
-			CI_LOG_V("passthru.vert loaded");
-		}
-		else
-		{
-			CI_LOG_V("passthru.vert does not exist, should quit");
-		}
-	}
-	catch (gl::GlslProgCompileExc &exc)
-	{
-		mError = string(exc.what());
-		CI_LOG_V("unable to load/compile passthru vertex shader:" + string(exc.what()));
-	}
-	catch (const std::exception &e)
-	{
-		mError = string(e.what());
-		CI_LOG_V("unable to load passthru vertex shader:" + string(e.what()));
-	}
+	//try
+	//{
+	//	fs::path vertexFile = getAssetPath("") / "passthru.vert";
+	//	if (fs::exists(vertexFile)) {
+	//		mPassthruVextexShaderString = loadString(loadAsset("passthru.vert"));
+	//		CI_LOG_V("passthru.vert loaded");
+	//	}
+	//	else
+	//	{
+	//		CI_LOG_V("passthru.vert does not exist, should quit");
+	//	}
+	//}
+	//catch (gl::GlslProgCompileExc &exc)
+	//{
+	//	mError = string(exc.what());
+	//	CI_LOG_V("unable to load/compile passthru vertex shader:" + string(exc.what()));
+	//}
+	//catch (const std::exception &e)
+	//{
+	//	mError = string(e.what());
+	//	CI_LOG_V("unable to load passthru vertex shader:" + string(e.what()));
+	//}
 	// load passthru fragment shader
-	mShaderTextToLoad = false;
+	/*mShaderTextToLoad = false;
 	try
 	{
 		fs::path fragFile = getAssetPath("") / "live.frag";
@@ -96,7 +96,7 @@ void VideodrommLiveCodingApp::setup()
 	{
 		mError = string(e.what());
 		CI_LOG_V("unable to load live fragment shader:" + string(e.what()));
-	}
+	}*/
 	// render fbo
 	gl::Fbo::Format fboFormat;
 	mFbo = gl::Fbo::create(mVDSettings->mFboWidth, mVDSettings->mFboHeight, fboFormat.colorTexture());
@@ -161,11 +161,11 @@ void VideodrommLiveCodingApp::update()
 	mVDAnimation->update();
 	mVDRouter->update();
 
-	if (mVDSettings->shaderEditIndex != 0) {
-		mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(mVDSettings->shaderEditIndex);
-		mShaderTextToLoad = true;
-		mVDSettings->shaderEditIndex = 0;
-	}
+	//if (mVDSettings->shaderEditIndex != 0) {
+	//	mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(mVDSettings->shaderEditIndex);
+	//	mShaderTextToLoad = true;
+	//	mVDSettings->shaderEditIndex = 0;
+	//}
 	updateWindowTitle();
 }
 void VideodrommLiveCodingApp::updateWindowTitle()
@@ -233,8 +233,8 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 		// reset zoom
 		mVDAnimation->controlValues[22] = 1.0f;
 		// update text in editor
-		mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(index);
-		mShaderTextToLoad = true;
+		//mFboTextureFragmentShaderString = mMixes[0]->getFboFragmentShaderText(index);
+		//mShaderTextToLoad = true;
 	}
 }
 
@@ -263,7 +263,7 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::clear();
 	gl::setMatricesWindow(mVDSettings->mFboWidth, mVDSettings->mFboHeight);
 
-	aShader->bind();
+	/*aShader->bind();
 	aShader->uniform("iGlobalTime", mVDSettings->iGlobalTime);
 	//20140703 aShader->uniform("iResolution", vec3(mVDSettings->mRenderResoXY.x, mVDSettings->mRenderResoXY.y, 1.0));
 	aShader->uniform("iResolution", vec3(mVDSettings->mFboWidth, mVDSettings->mFboHeight, 1.0));
@@ -322,7 +322,7 @@ void VideodrommLiveCodingApp::drawMain()
 	aShader->uniform("iParam1", mVDSettings->iParam1);
 	aShader->uniform("iParam2", mVDSettings->iParam2);
 	aShader->uniform("iXorY", mVDSettings->iXorY);
-	aShader->uniform("iBadTv", mVDSettings->iBadTv);
+	aShader->uniform("iBadTv", mVDSettings->iBadTv);*/
 
 	if (mMixes[0]->isFboUsed()) {
 		mMixes[0]->getFboTexture(2)->bind(0);
@@ -375,7 +375,7 @@ void VideodrommLiveCodingApp::drawMain()
 	if (mVDUI->isReady()) {
 
 #pragma region Editor
-		ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
+		/*ui::SetNextWindowPos(ImVec2(mVDSettings->uiXPosCol1, mVDSettings->uiYPosRow2), ImGuiSetCond_Once);
 		ui::SetNextWindowSize(ImVec2(mVDSettings->uiLargeW * 3, mVDSettings->uiLargeH), ImGuiSetCond_FirstUseEver);
 		ui::Begin("Editor");
 		{
@@ -417,9 +417,9 @@ void VideodrommLiveCodingApp::drawMain()
 					CI_LOG_V("live.frag loaded and compiled");
 					mFboTextureFragmentShaderString = mShaderText;
 					stringstream sParams;
-					sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*/ " << mFboTextureFragmentShaderString;
+					sParams << "/*{ \"title\" : \"" << getElapsedSeconds() << "\" }*//* " << mFboTextureFragmentShaderString;
 					mVDRouter->wsWrite(sParams.str());
-					//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*/ " + mFboTextureFragmentShaderString);
+					//OK mVDRouter->wsWrite("/*{ \"title\" : \"live\" }*//* " + mFboTextureFragmentShaderString);
 					mError = "";
 				}
 				catch (gl::GlslProgCompileExc &exc)
@@ -438,7 +438,7 @@ void VideodrommLiveCodingApp::drawMain()
 			}
 			ui::TextColored(ImColor(255, 0, 0), mError.c_str());
 		}
-		ui::End();
+		ui::End();*/
 #pragma endregion Editor
 	}
 
