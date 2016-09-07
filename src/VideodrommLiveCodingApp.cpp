@@ -46,57 +46,6 @@ void VideodrommLiveCodingApp::setup()
 	static float f = 0.0f;
 	// mouse cursor and UI
 	setUIVisibility(mVDSettings->mCursorVisible);
-	// load vertex shader 
-	//try
-	//{
-	//	fs::path vertexFile = getAssetPath("") / "passthru.vert";
-	//	if (fs::exists(vertexFile)) {
-	//		mPassthruVextexShaderString = loadString(loadAsset("passthru.vert"));
-	//		CI_LOG_V("passthru.vert loaded");
-	//	}
-	//	else
-	//	{
-	//		CI_LOG_V("passthru.vert does not exist, should quit");
-	//	}
-	//}
-	//catch (gl::GlslProgCompileExc &exc)
-	//{
-	//	mError = string(exc.what());
-	//	CI_LOG_V("unable to load/compile passthru vertex shader:" + string(exc.what()));
-	//}
-	//catch (const std::exception &e)
-	//{
-	//	mError = string(e.what());
-	//	CI_LOG_V("unable to load passthru vertex shader:" + string(e.what()));
-	//}
-	// load passthru fragment shader
-	/*mShaderTextToLoad = false;
-	try
-	{
-		fs::path fragFile = getAssetPath("") / "live.frag";
-		if (fs::exists(fragFile)) {
-			mFboTextureFragmentShaderString = loadString(loadAsset("live.frag"));
-			mShaderTextToLoad = true;
-		}
-		else
-		{
-			mError = "live.frag does not exist";
-			CI_LOG_V(mError);
-		}
-		aShader = gl::GlslProg::create(mPassthruVextexShaderString, mFboTextureFragmentShaderString);
-		aShader->setLabel("live");
-		CI_LOG_V("live.frag loaded and compiled");
-	}
-	catch (gl::GlslProgCompileExc &exc)
-	{
-		mError = string(exc.what());
-		CI_LOG_V("unable to load/compile live fragment shader:" + string(exc.what()));
-	}
-	catch (const std::exception &e)
-	{
-		mError = string(e.what());
-		CI_LOG_V("unable to load live fragment shader:" + string(e.what()));
-	}*/
 	// render fbo
 	gl::Fbo::Format fboFormat;
 	mFbo = gl::Fbo::create(mVDSettings->mFboWidth, mVDSettings->mFboHeight, fboFormat.colorTexture());
@@ -106,7 +55,13 @@ void VideodrommLiveCodingApp::setup()
 	mMainWindow = getWindow();
 	mMainWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawMain, this));
 	mMainWindow->getSignalResize().connect(std::bind(&VideodrommLiveCodingApp::resizeWindow, this));
-	if (mVDSettings->mStandalone) createRenderWindow();
+	if (mVDSettings->mStandalone) {
+		createRenderWindow();
+		setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
+	}
+	else {
+
+	}
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
@@ -184,6 +139,7 @@ void VideodrommLiveCodingApp::cleanup()
 		mVDSettings->save();
 		mVDSession->save();
 		deleteRenderWindows();
+		mVDRouter->wsDisconnect();
 		quit();
 	}
 }
