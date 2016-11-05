@@ -76,11 +76,14 @@
     <Filter Include="Blocks\OSC">
       <UniqueIdentifier>{E038046A-7806-458A-AC56-45D8431BD158}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Blocks\OSC\src">
-      <UniqueIdentifier>{EFAAE2BE-06AF-4333-945B-81D92BB884C9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="debug">
       <UniqueIdentifier>{0764f060-4f70-444b-a598-8b76ced771bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\OSC\cinder">
+      <UniqueIdentifier>{45cd1483-dbd5-43db-946b-a2692899750c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\OSC\cinder\osc">
+      <UniqueIdentifier>{e974dc0e-7cdf-4dac-9e4e-ad4ec3591bed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -354,16 +357,22 @@
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-WebSocketPP\src\WebSocketServer.h">
       <Filter>Blocks\Cinder-WebSocketPP\src</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\..\Cinder\blocks\OSC\src\Osc.cpp">
-      <Filter>Blocks\OSC\src</Filter>
+    <ClCompile Include="..\..\..\Cinder\blocks\OSC\src\cinder\osc\Osc.cpp">
+      <Filter>Blocks\OSC\cinder\osc</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\..\Cinder\blocks\OSC\src\Osc.h">
-      <Filter>Blocks\OSC\src</Filter>
-    </ClInclude>
+    <ClCompile Include="..\..\..\Cinder\blocks\Cinder-Videodromm\src\VDUIWarps.cpp">
+      <Filter>Blocks\Videodromm\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Cinder\blocks\OSC\src\cinder\osc\Osc.h">
+      <Filter>Blocks\OSC\cinder\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Cinder\blocks\Cinder-Videodromm\include\VDUIWarps.h">
+      <Filter>Blocks\Videodromm\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
