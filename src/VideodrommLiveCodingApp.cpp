@@ -278,34 +278,34 @@ void VideodrommLiveCodingApp::drawMain()
 	aShader->uniform("iParam1", mVDSettings->iParam1);
 	aShader->uniform("iParam2", mVDSettings->iParam2);
 	aShader->uniform("iXorY", mVDSettings->iXorY);
-	aShader->uniform("iBadTv", mVDSettings->iBadTv);*/
+	aShader->uniform("iBadTv", mVDSettings->iBadTv);
 
 	if (mMixes[0]->isFboUsed()) {
 		mMixes[0]->getFboTexture(2)->bind(0);
 		mMixes[0]->getFboTexture(1)->bind(1);
 	}
-	else {
+	else {*/
 		for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(); t++) {
 			mMixes[0]->getInputTexture(t)->bind(t);
 		}
 		//mMixes[0]->getInputTexture(1)->bind(0);
 		//mMixes[0]->getInputTexture(2)->bind(1);
-	}
+	//}
 
 	gl::drawSolidRect(Rectf(0, 0, mVDSettings->mFboWidth, mVDSettings->mFboHeight));
 	// stop drawing into the FBO
 	mFbo->unbindFramebuffer();
-	if (mMixes[0]->isFboUsed()) {
+	/*if (mMixes[0]->isFboUsed()) {
 		mMixes[0]->getFboTexture(1)->unbind();
 		mMixes[0]->getFboTexture(2)->unbind();
 	}
-	else {
+	else {*/
 		for (unsigned int t = 0; t < mMixes[0]->getInputTexturesCount(); t++) {
 			mMixes[0]->getInputTexture(t)->unbind();
 		}
 		//mMixes[0]->getInputTexture(2)->unbind();
 		//mMixes[0]->getInputTexture(1)->unbind();
-	}
+	//}
 #pragma endregion drawfbo
 
 	gl::clear(Color::black());
