@@ -2,8 +2,8 @@
 
 void VideodrommLiveCodingApp::prepare(Settings *settings)
 {
-	settings->setWindowSize(1024, 768);
-	settings->setBorderless();
+	settings->setWindowSize(640, 480);
+	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
 }
 void VideodrommLiveCodingApp::setup()
@@ -55,13 +55,13 @@ void VideodrommLiveCodingApp::setup()
 	mMainWindow = getWindow();
 	mMainWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawMain, this));
 	mMainWindow->getSignalResize().connect(std::bind(&VideodrommLiveCodingApp::resizeWindow, this));
-	if (mVDSettings->mStandalone) {
+	/*if (mVDSettings->mStandalone) {
 		createRenderWindow();
 		setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
 	}
 	else {
 
-	}
+	}*/
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
