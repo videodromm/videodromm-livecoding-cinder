@@ -77,19 +77,9 @@ private:
 	unsigned int				i, j;
 
 	bool						mouseGlobal;
-	//bool						removeUI;
-	// shader
-	//gl::GlslProgRef				aShader;
-	// boolean to update the editor text
-	//bool						mShaderTextToLoad; 
-		
-	//! default vertex shader
-	//std::string					mPassthruVextexShaderString;
-	//! default fragment shader
-	//std::string					mFboTextureFragmentShaderString;
+
 	string						mError;
-	// fbo
-	gl::FboRef					mFbo;
+
 	// windows
 	WindowRef					mMainWindow;
 	bool						mIsShutDown;
