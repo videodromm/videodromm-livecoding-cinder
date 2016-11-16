@@ -173,7 +173,7 @@ void VideodrommLiveCodingApp::resizeWindow()
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
-	int index = (int)(event.getX() / (mVDSettings->uiElementWidth + mVDSettings->uiMargin));// +1;
+	int index = (int)(event.getX() / (mVDSettings->uiLargePreviewW + mVDSettings->uiMargin));
 	ci::fs::path mPath = event.getFile(event.getNumFiles() - 1);
 	string mFile = mPath.string();
 	if (mMixes[0]->loadFileFromAbsolutePath(mFile, index) > -1) {
@@ -199,6 +199,7 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::clear(Color::black());
 	//	gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
+	gl::draw(mMixes[0]->getMixTexture(), getWindowBounds());
 
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
