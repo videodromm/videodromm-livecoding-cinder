@@ -218,7 +218,7 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::clear(Color::black());
 	//	gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	gl::draw(mMixes[0]->getMixTexture(), getWindowBounds());
+	gl::draw(mMixes[0]->getRenderTexture(), getWindowBounds());
 
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
