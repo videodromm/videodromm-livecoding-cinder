@@ -16,7 +16,7 @@ void VideodrommLiveCodingApp::setup()
 	// Session
 	mVDSession = VDSession::create(mVDSettings);
 	// Utils
-	mVDUtils = VDUtils::create(mVDSettings);
+	//mVDUtils = VDUtils::create(mVDSettings);
 	// Animation
 	mVDAnimation = VDAnimation::create(mVDSettings, mVDSession);
 	// Message router
@@ -33,7 +33,7 @@ void VideodrommLiveCodingApp::setup()
 	}
 	mVDAnimation->tapTempo();
 
-	mVDUtils->getWindowsResolution();
+	mVDSession->getWindowsResolution();
 	setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
 
 	mVDSettings->iResolution.x = mVDSettings->mRenderWidth;
