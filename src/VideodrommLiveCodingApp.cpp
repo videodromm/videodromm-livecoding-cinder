@@ -128,6 +128,7 @@ void VideodrommLiveCodingApp::cleanup()
 		ui::disconnectWindow(getWindow());
 		ui::Shutdown();
 		// save settings
+		mMixes[0]->save();
 		mVDSettings->save();
 		mVDSession->save();
 		deleteRenderWindows();
@@ -135,25 +136,44 @@ void VideodrommLiveCodingApp::cleanup()
 		quit();
 	}
 }
+
+void VideodrommLiveCodingApp::mouseMove(MouseEvent event)
+{
+	if (!mMixes[0]->handleMouseMove(event)) {
+		// let your application perform its mouseMove handling here
+	}
+}
+
 void VideodrommLiveCodingApp::mouseDown(MouseEvent event)
 {
+	if (!mMixes[0]->handleMouseDown(event)) {
+		// let your application perform its mouseDown handling here
+	}
+}
 
+void VideodrommLiveCodingApp::mouseDrag(MouseEvent event)
+{
+	if (!mMixes[0]->handleMouseDrag(event)) {
+		// let your application perform its mouseDrag handling here
+	}
+}
+
+void VideodrommLiveCodingApp::mouseUp(MouseEvent event)
+{
+	if (!mMixes[0]->handleMouseUp(event)) {
+		// let your application perform its mouseUp handling here
+	}
 }
 void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 {
-
-	if (!mVDAnimation->handleKeyDown(event)) {
-		// Animation did not handle the key, so handle it here
+	if (!mMixes[0]->handleKeyDown(event)) {
 		switch (event.getCode()) {
 		case KeyEvent::KEY_ESCAPE:
 			// quit the application
 			quit();
 			break;
-		case KeyEvent::KEY_l:
-			mVDAnimation->load();
-			break;
 		case KeyEvent::KEY_h:
-			// mouse cursor
+			// mouse cursor and ui visibility
 			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
 			setUIVisibility(mVDSettings->mCursorVisible);
 			break;
@@ -163,13 +183,13 @@ void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 
 void VideodrommLiveCodingApp::keyUp(KeyEvent event)
 {
-	if (!mVDAnimation->handleKeyUp(event)) {
-		// Animation did not handle the key, so handle it here
+	if (!mMixes[0]->handleKeyUp(event)) {
 	}
 }
 void VideodrommLiveCodingApp::resizeWindow()
 {
 	mVDUI->resize();
+	mMixes[0]->resize();
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
@@ -179,9 +199,6 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 	ci::fs::path mPath = event.getFile(event.getNumFiles() - 1);
 	string mFile = mPath.string();
 	if (mMixes[0]->loadFileFromAbsolutePath(mFile, index) > -1) {
-		// load success
-		// reset zoom
-		mVDAnimation->controlValues[22] = 1.0f;
 	}
 }
 
