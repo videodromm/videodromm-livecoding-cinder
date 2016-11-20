@@ -10,14 +10,6 @@
 #include "VDSession.h"
 // Log
 #include "VDLog.h"
-// Utils
-//#include "VDUtils.h"
-// Message router
-#include "VDRouter.h"
-// Animation
-#include "VDAnimation.h"
-// Mix
-#include "VDMix.h"
 // UI
 #include "VDUI.h"
 
@@ -53,18 +45,9 @@ private:
 	VDSessionRef				mVDSession;
 	// Log
 	VDLogRef					mVDLog;
-	// Utils
-	//VDUtilsRef					mVDUtils;
-	// Message router
-	VDRouterRef					mVDRouter;
-	// Animation
-	VDAnimationRef				mVDAnimation;
 	// UI
 	VDUIRef						mVDUI;
-
-	// Mix
-	VDMixList					mMixes;
-	fs::path					mMixesFilepath;
+	
 	// handle resizing for imgui
 	void						resizeWindow();
 	bool						mIsResizing;
