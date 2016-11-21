@@ -172,13 +172,7 @@ void VideodrommLiveCodingApp::resizeWindow()
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
-	int index = (int)(event.getX() / (mVDSettings->uiLargePreviewW + mVDSettings->uiMargin));
-	int y = (int)(event.getY());
-	if (index < 2 || y < mVDSettings->uiYPosRow3 || y > mVDSettings->uiYPosRow3 + mVDSettings->uiPreviewH) index = 0;
-	ci::fs::path mPath = event.getFile(event.getNumFiles() - 1);
-	string mFile = mPath.string();
-	if (mVDSession->loadFileFromAbsolutePath(mFile, index) > -1) {
-	}
+	mVDSession->fileDrop(event);
 }
 
 void VideodrommLiveCodingApp::drawRender()
