@@ -25,8 +25,8 @@ void VideodrommLiveCodingApp::setup()
 	mVDUI = VDUI::create(mVDSettings, mVDSession);
 
 	mouseGlobal = false;
-
-	static float f = 0.0f;
+	mFadeInDelay = true;
+	//static float f = 0.0f;
 	// mouse cursor and UI
 	setUIVisibility(mVDSettings->mCursorVisible);
 	// windows
@@ -179,9 +179,17 @@ void VideodrommLiveCodingApp::drawRender()
 {
 	gl::clear(Color::black());
 	//gl::setMatricesWindow(toPixels(getWindowSize()));
+	if (mFadeInDelay) {
+		mVDSettings->iAlpha = 0.0f;
+		if (getElapsedFrames() > mVDSession->getFadeInDelay()) {
+			mFadeInDelay = false;
+			timeline().apply(&mVDSettings->iAlpha, 0.0f, 1.0f, 1.5f, EaseInCubic());
+		}
+	}
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
 	// live coding fbo gl::draw(mFbo->getColorTexture(), getWindowBounds());
 	gl::draw(mVDSession->getMixTexture(), getWindowBounds());
+
 }
 
 void VideodrommLiveCodingApp::drawMain()

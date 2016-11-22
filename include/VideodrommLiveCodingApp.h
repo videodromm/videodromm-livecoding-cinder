@@ -73,5 +73,6 @@ private:
 	WindowRef					mRenderWindow;
 	// timeline
 	Anim<float>					mRenderWindowTimer;
+	bool						mFadeInDelay;
 
 };
