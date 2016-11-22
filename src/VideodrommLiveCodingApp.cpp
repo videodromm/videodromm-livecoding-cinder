@@ -90,15 +90,8 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 }
 void VideodrommLiveCodingApp::update()
 {
-	mVDSettings->iFps = getAverageFps();
-	mVDSettings->sFps = toString(floor(mVDSettings->iFps));
+	mVDSession->setControlValue(30, getAverageFps());
 	mVDSession->update();
-
-	updateWindowTitle();
-}
-void VideodrommLiveCodingApp::updateWindowTitle()
-{
-	//mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
 }
 void VideodrommLiveCodingApp::cleanup()
 {

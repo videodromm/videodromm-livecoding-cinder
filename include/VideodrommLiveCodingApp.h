@@ -47,7 +47,6 @@ private:
 	// handle resizing for imgui
 	void						resizeWindow();
 	bool						mIsResizing;
-	void						updateWindowTitle();
 	// imgui
 	float						color[4];
 	float						backcolor[4];
