@@ -9,8 +9,8 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 void VideodrommLiveCodingApp::setup()
 {
 	// maximize fps
-	disableFrameRate();
-	gl::enableVerticalSync(false);
+	//disableFrameRate();
+	//gl::enableVerticalSync(false);
 	// Settings
 	mVDSettings = VDSettings::create();
 	// Session
@@ -42,6 +42,7 @@ void VideodrommLiveCodingApp::setup()
 		else {
 
 		}*/
+	setFrameRate(mVDSession->getTargetFps());
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
@@ -90,7 +91,7 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 }
 void VideodrommLiveCodingApp::update()
 {
-	mVDSession->setControlValue(30, getAverageFps());
+	mVDSession->setControlValue(20, getAverageFps());
 	mVDSession->update();
 }
 void VideodrommLiveCodingApp::cleanup()
