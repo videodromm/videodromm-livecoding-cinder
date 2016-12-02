@@ -8,9 +8,6 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 }
 void VideodrommLiveCodingApp::setup()
 {
-	// maximize fps
-	//disableFrameRate();
-	//gl::enableVerticalSync(false);
 	// Settings
 	mVDSettings = VDSettings::create();
 	// Session
@@ -26,26 +23,28 @@ void VideodrommLiveCodingApp::setup()
 
 	mouseGlobal = false;
 	mFadeInDelay = true;
-	//static float f = 0.0f;
 	// mouse cursor and UI
 	setUIVisibility(mVDSettings->mCursorVisible);
 	// windows
 	mIsShutDown = false;
-	mIsResizing = true;
 	mMainWindow = getWindow();
 	mMainWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawMain, this));
 	mMainWindow->getSignalResize().connect(std::bind(&VideodrommLiveCodingApp::resizeWindow, this));
-	/*if (mVDSettings->mStandalone) {
+	if (mVDSettings->mStandalone) {
 		createRenderWindow();
 		setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
 		}
 		else {
 
-		}*/
+		}
 	setFrameRate(mVDSession->getTargetFps());
+	CI_LOG_V("setup");
+
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
+	mVDUI->resize();
+
 	deleteRenderWindows();
 	mVDSession->getWindowsResolution();
 
@@ -91,6 +90,8 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 }
 void VideodrommLiveCodingApp::update()
 {
+	CI_LOG_V("up");
+
 	mVDSession->setControlValue(20, getAverageFps());
 	mVDSession->update();
 }
@@ -139,17 +140,36 @@ void VideodrommLiveCodingApp::mouseUp(MouseEvent event)
 }
 void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 {
-	if (!mVDSession->handleKeyDown(event)) {
+#if defined( CINDER_COCOA )
+	bool isModDown = event.isMetaDown();
+#else // windows
+	bool isModDown = event.isControlDown();
+#endif
+	if (isModDown) {
 		switch (event.getCode()) {
-		case KeyEvent::KEY_ESCAPE:
+		case KeyEvent::KEY_r:
 			// quit the application
-			quit();
+			createRenderWindow();
 			break;
-		case KeyEvent::KEY_h:
-			// mouse cursor and ui visibility
-			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
-			setUIVisibility(mVDSettings->mCursorVisible);
+		case KeyEvent::KEY_d:
+			// quit the application
+			if (isModDown) deleteRenderWindows();
 			break;
+		}
+	}
+	else {
+		if (!mVDSession->handleKeyDown(event)) {
+			switch (event.getCode()) {
+			case KeyEvent::KEY_ESCAPE:
+				// quit the application
+				quit();
+				break;
+			case KeyEvent::KEY_h:
+				// mouse cursor and ui visibility
+				mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
+				setUIVisibility(mVDSettings->mCursorVisible);
+				break;
+			}
 		}
 	}
 }
@@ -162,7 +182,7 @@ void VideodrommLiveCodingApp::keyUp(KeyEvent event)
 void VideodrommLiveCodingApp::resizeWindow()
 {
 	mVDUI->resize();
-	mVDSession->resize();
+	//mVDSession->resize();
 }
 void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
@@ -171,12 +191,16 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 
 void VideodrommLiveCodingApp::drawRender()
 {
+	CI_LOG_V("dr");
+
 	gl::clear(Color::black());
 	//gl::setMatricesWindow(toPixels(getWindowSize()));
 	if (mFadeInDelay) {
 		mVDSettings->iAlpha = 0.0f;
 		if (getElapsedFrames() > mVDSession->getFadeInDelay()) {
 			mFadeInDelay = false;
+			// warps resize at the end
+			mVDSession->resize();
 			timeline().apply(&mVDSettings->iAlpha, 0.0f, 1.0f, 1.5f, EaseInCubic());
 		}
 	}
@@ -188,6 +212,8 @@ void VideodrommLiveCodingApp::drawRender()
 
 void VideodrommLiveCodingApp::drawMain()
 {
+	CI_LOG_V("dm");
+
 	mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
 
 	gl::clear(Color::black());
