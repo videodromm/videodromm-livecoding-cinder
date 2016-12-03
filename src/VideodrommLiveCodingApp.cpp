@@ -27,6 +27,7 @@ void VideodrommLiveCodingApp::setup()
 	setUIVisibility(mVDSettings->mCursorVisible);
 	// windows
 	mIsShutDown = false;
+	isWindowReady = false;
 	mMainWindow = getWindow();
 	mMainWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawMain, this));
 	mMainWindow->getSignalResize().connect(std::bind(&VideodrommLiveCodingApp::resizeWindow, this));
@@ -43,6 +44,7 @@ void VideodrommLiveCodingApp::setup()
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
+	isWindowReady = false;
 	mVDUI->resize();
 
 	deleteRenderWindows();
@@ -69,6 +71,7 @@ void VideodrommLiveCodingApp::createRenderWindow()
 void VideodrommLiveCodingApp::positionRenderWindow()
 {
 	mRenderWindow->setPos(mVDSettings->mRenderX, mVDSettings->mRenderY);
+	isWindowReady = true;
 }
 void VideodrommLiveCodingApp::deleteRenderWindows()
 {
@@ -90,8 +93,6 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 }
 void VideodrommLiveCodingApp::update()
 {
-	CI_LOG_V("up");
-
 	mVDSession->setControlValue(20, getAverageFps());
 	mVDSession->update();
 }
@@ -191,8 +192,6 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 
 void VideodrommLiveCodingApp::drawRender()
 {
-	CI_LOG_V("dr");
-
 	gl::clear(Color::black());
 	//gl::setMatricesWindow(toPixels(getWindowSize()));
 	if (mFadeInDelay) {
@@ -205,15 +204,11 @@ void VideodrommLiveCodingApp::drawRender()
 		}
 	}
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	// live coding fbo gl::draw(mFbo->getColorTexture(), getWindowBounds());
-	gl::draw(mVDSession->getMixTexture(), getWindowBounds());
-
+	if (isWindowReady) 	gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
 }
 
 void VideodrommLiveCodingApp::drawMain()
 {
-	CI_LOG_V("dm");
-
 	mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
 
 	gl::clear(Color::black());

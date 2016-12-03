@@ -69,6 +69,7 @@ private:
 	vector<WindowRef>			allRenderWindows;
 	void						positionRenderWindow();
 	WindowRef					mRenderWindow;
+	bool						isWindowReady;
 	// timeline
 	Anim<float>					mRenderWindowTimer;
 	bool						mFadeInDelay;
