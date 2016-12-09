@@ -93,7 +93,7 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 }
 void VideodrommLiveCodingApp::update()
 {
-	mVDSession->setControlValue(20, getAverageFps());
+	mVDSession->setControlValue(mVDSettings->IFPS, getAverageFps());
 	mVDSession->update();
 }
 void VideodrommLiveCodingApp::cleanup()
