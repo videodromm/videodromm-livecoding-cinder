@@ -209,7 +209,7 @@ void VideodrommLiveCodingApp::drawRender()
 
 void VideodrommLiveCodingApp::drawMain()
 {
-	mMainWindow->setTitle(mVDSettings->sFps + " fps Live Coding");
+	mMainWindow->setTitle(mVDSettings->sFps + " fps videodromm");
 
 	gl::clear(Color::black());
 	//	gl::setMatricesWindow(toPixels(getWindowSize()));
