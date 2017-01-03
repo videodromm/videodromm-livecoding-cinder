@@ -34,10 +34,10 @@ void VideodrommLiveCodingApp::setup()
 	if (mVDSettings->mStandalone) {
 		createRenderWindow();
 		setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
-		}
-		else {
+	}
+	else {
 
-		}
+	}
 	setFrameRate(mVDSession->getTargetFps());
 	CI_LOG_V("setup");
 
@@ -66,7 +66,7 @@ void VideodrommLiveCodingApp::createRenderWindow()
 	mVDSettings->mRenderPosXY = ivec2(mVDSettings->mRenderX, mVDSettings->mRenderY);//20141214 was 0
 	mRenderWindow->setPos(50, 50);
 	mRenderWindowTimer = 0.0f;
-	timeline().apply(&mRenderWindowTimer, 1.0f, 2.0f).finishFn([&]{ positionRenderWindow(); });
+	timeline().apply(&mRenderWindowTimer, 1.0f, 2.0f).finishFn([&] { positionRenderWindow(); });
 }
 void VideodrommLiveCodingApp::positionRenderWindow()
 {
@@ -141,40 +141,26 @@ void VideodrommLiveCodingApp::mouseUp(MouseEvent event)
 }
 void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 {
-#if defined( CINDER_COCOA )
-	bool isModDown = event.isMetaDown();
-#else // windows
-	bool isModDown = event.isControlDown();
-#endif
-	if (isModDown) {
+	if (!mVDSession->handleKeyDown(event)) {
 		switch (event.getCode()) {
-		case KeyEvent::KEY_r:
-			// quit the application
+		case KeyEvent::KEY_KP_PLUS:
 			createRenderWindow();
 			break;
-		case KeyEvent::KEY_d:
-			// quit the application
-			if (isModDown) deleteRenderWindows();
+		case KeyEvent::KEY_KP_MINUS:
+			deleteRenderWindows();
 			break;
-		}
-	}
-	else {
-		if (!mVDSession->handleKeyDown(event)) {
-			switch (event.getCode()) {
-			case KeyEvent::KEY_ESCAPE:
-				// quit the application
-				quit();
-				break;
-			case KeyEvent::KEY_h:
-				// mouse cursor and ui visibility
-				mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
-				setUIVisibility(mVDSettings->mCursorVisible);
-				break;
-			}
+		case KeyEvent::KEY_ESCAPE:
+			// quit the application
+			quit();
+			break;
+		case KeyEvent::KEY_h:
+			// mouse cursor and ui visibility
+			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
+			setUIVisibility(mVDSettings->mCursorVisible);
+			break;
 		}
 	}
 }
-
 void VideodrommLiveCodingApp::keyUp(KeyEvent event)
 {
 	if (!mVDSession->handleKeyUp(event)) {
