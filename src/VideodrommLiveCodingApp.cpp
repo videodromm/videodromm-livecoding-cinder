@@ -203,8 +203,10 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::clear(Color::black());
 	//	gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
-	//gl::draw(mVDSession->getStreamedTexture(), getWindowBounds()); 
+	for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
+		gl::draw(mVDSession->getTriangleTexture(w), getWindowBounds());
+	}
+	// 20170106 gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
 
