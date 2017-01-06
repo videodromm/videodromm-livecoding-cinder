@@ -88,6 +88,14 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 }
 void VideodrommLiveCodingApp::update()
 {
+	switch (mVDSession->getCmd()) {
+	case 0:
+		createRenderWindow();
+		break;
+	case 1:
+		deleteRenderWindows();
+		break;
+	}
 	mVDSession->setControlValue(mVDSettings->IFPS, getAverageFps());
 	mVDSession->update();
 }
