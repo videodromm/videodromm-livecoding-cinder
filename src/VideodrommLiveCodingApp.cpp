@@ -193,7 +193,16 @@ void VideodrommLiveCodingApp::drawRender()
 		}
 	}
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	if (isWindowReady) 	gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
+	if (isWindowReady) {
+		if (mVDSession->isWarpTriangle()) {
+			for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
+				if (mVDSession->isTriangleActive(w)) gl::draw(mVDSession->getTriangleTexture(w), getWindowBounds());
+			}
+		}
+		else {
+			gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
+		}
+	}
 }
 
 void VideodrommLiveCodingApp::drawMain()
@@ -201,12 +210,18 @@ void VideodrommLiveCodingApp::drawMain()
 	mMainWindow->setTitle(mVDSettings->sFps + " fps videodromm");
 
 	gl::clear(Color::black());
-	//	gl::setMatricesWindow(toPixels(getWindowSize()));
+	//gl::setMatricesWindow(toPixels(getWindowSize()));
+	gl::enableAlphaBlending(mVDSession->isEnabledAlphaBlending());
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
-		gl::draw(mVDSession->getTriangleTexture(w), getWindowBounds());
+	if (mVDSession->isWarpTriangle()) {
+		for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
+			if (mVDSession->isTriangleActive(w)) gl::draw(mVDSession->getTriangleTexture(w), getWindowBounds());
+		}
 	}
-	// 20170106 gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
+	else {
+		gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), getWindowBounds());
+	}
+
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
 
