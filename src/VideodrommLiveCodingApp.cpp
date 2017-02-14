@@ -96,7 +96,7 @@ void VideodrommLiveCodingApp::update()
 		deleteRenderWindows();
 		break;
 	}
-	mVDSession->setControlValue(mVDSettings->IFPS, getAverageFps());
+	mVDSession->setFloatUniformValueByIndex(mVDSettings->IFPS, getAverageFps());
 	mVDSession->update();
 }
 void VideodrommLiveCodingApp::cleanup()
