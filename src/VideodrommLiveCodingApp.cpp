@@ -14,7 +14,8 @@ void VideodrommLiveCodingApp::setup()
 	mVDSession = VDSession::create(mVDSettings);
 
 	mVDSession->getWindowsResolution();
-	setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
+	// TODO render window size must be < main window size or else it overlaps
+	setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight); 
 
 	// UI
 	mVDUI = VDUI::create(mVDSettings, mVDSession);
@@ -37,7 +38,7 @@ void VideodrommLiveCodingApp::setup()
 
 	}
 	setFrameRate(mVDSession->getTargetFps());
-	CI_LOG_V("setup");
+	//CI_LOG_V("setup");
 
 }
 void VideodrommLiveCodingApp::createRenderWindow()
@@ -48,7 +49,7 @@ void VideodrommLiveCodingApp::createRenderWindow()
 	deleteRenderWindows();
 	mVDSession->getWindowsResolution();
 
-	CI_LOG_V("createRenderWindow, resolution:" + toString(mVDSettings->mRenderWidth) + "x" + toString(mVDSettings->mRenderHeight));
+	//CI_LOG_V("createRenderWindow, resolution:" + toString(mVDSettings->mRenderWidth) + "x" + toString(mVDSettings->mRenderHeight));
 
 	string windowName = "render";
 	mRenderWindow = createWindow(Window::Format().size(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));
@@ -104,7 +105,7 @@ void VideodrommLiveCodingApp::cleanup()
 	if (!mIsShutDown)
 	{
 		mIsShutDown = true;
-		CI_LOG_V("shutdown");
+		//CI_LOG_V("shutdown");
 		ui::disconnectWindow(getWindow());
 		ui::Shutdown();
 		// save settings
@@ -192,7 +193,7 @@ void VideodrommLiveCodingApp::drawRender()
 			timeline().apply(&mVDSettings->iAlpha, 0.0f, 1.0f, 1.5f, EaseInCubic());
 		}
 	}
-	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
+	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);// , false);
 	if (isWindowReady) {
 		if (mVDSession->isWarpTriangle()) {
 			for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
@@ -200,7 +201,7 @@ void VideodrommLiveCodingApp::drawRender()
 			}
 		}
 		else {
-			gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
+			gl::draw(mVDSession->getRenderTexture(), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
 		}
 	}
 }
@@ -219,7 +220,7 @@ void VideodrommLiveCodingApp::drawMain()
 		}
 	}
 	else {
-		gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), getWindowBounds());
+		gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
 	}
 
 	// imgui
