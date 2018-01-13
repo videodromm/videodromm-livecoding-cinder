@@ -14,9 +14,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "504"
-            endingLineNumber = "504"
-            landmarkName = "VideodrommLiveCodingApp::drawMain()"
-            landmarkType = "5">
+            endingLineNumber = "504">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

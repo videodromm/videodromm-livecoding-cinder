@@ -15,7 +15,7 @@ void VideodrommLiveCodingApp::setup()
 
 	mVDSession->getWindowsResolution();
 	// TODO render window size must be < main window size or else it overlaps
-	setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight); 
+	setWindowSize(mVDSettings->mMainWindowWidth - 300, mVDSettings->mMainWindowHeight - 100);
 
 	// UI
 	mVDUI = VDUI::create(mVDSettings, mVDSession);
@@ -195,14 +195,7 @@ void VideodrommLiveCodingApp::drawRender()
 	}
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);// , false);
 	if (isWindowReady) {
-		if (mVDSession->isWarpTriangle()) {
-			for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
-				if (mVDSession->isTriangleActive(w)) gl::draw(mVDSession->getTriangleTexture(w), getWindowBounds());
-			}
-		}
-		else {
-			gl::draw(mVDSession->getRenderTexture(), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
-		}
+		gl::draw(mVDSession->getRenderTexture(), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()	
 	}
 }
 
@@ -214,14 +207,7 @@ void VideodrommLiveCodingApp::drawMain()
 	//gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::enableAlphaBlending(mVDSession->isEnabledAlphaBlending());
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
-	if (mVDSession->isWarpTriangle()) {
-		for (int w = 0; w < mVDSession->getTriangleCount(); w++) {
-			if (mVDSession->isTriangleActive(w)) gl::draw(mVDSession->getTriangleTexture(w), getWindowBounds());
-		}
-	}
-	else {
-		gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
-	}
+	gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
 
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
