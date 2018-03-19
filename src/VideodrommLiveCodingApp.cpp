@@ -5,6 +5,10 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 	settings->setWindowSize(640, 480);
 	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
+#ifdef _DEBUG
+	settings->setConsoleWindowEnabled();
+#else
+#endif  // _DEBUG
 }
 void VideodrommLiveCodingApp::setup()
 {
