@@ -2,7 +2,7 @@
 
 void VideodrommLiveCodingApp::prepare(Settings *settings)
 {
-	settings->setWindowSize(640, 480);
+	settings->setWindowSize(1280, 720);
 	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
 #ifdef _DEBUG
@@ -10,7 +10,8 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 #else
 #endif  // _DEBUG
 }
-void VideodrommLiveCodingApp::setup()
+VideodrommLiveCodingApp::VideodrommLiveCodingApp()
+	: mSpoutOut("VDLiveCoding", app::getWindowSize())
 {
 	// Settings
 	mVDSettings = VDSettings::create();
@@ -43,7 +44,7 @@ void VideodrommLiveCodingApp::setup()
 	}
 	setFrameRate(mVDSession->getTargetFps());
 	//CI_LOG_V("setup");
-
+	
 }
 void VideodrommLiveCodingApp::createRenderWindow()
 {
@@ -212,7 +213,8 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::enableAlphaBlending(mVDSession->isEnabledAlphaBlending());
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
 	gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
-
+	// spout sender
+	if (mVDSettings->mSpoutSender) mSpoutOut.sendViewport();
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
 

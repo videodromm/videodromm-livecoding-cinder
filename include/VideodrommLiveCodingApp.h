@@ -10,6 +10,8 @@
 #include "VDSession.h"
 // UI
 #include "VDUI.h"
+// Spout
+#include "CiSpoutOut.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -23,7 +25,7 @@ class VideodrommLiveCodingApp : public App {
 public:
 	static void prepare(Settings *settings);
 
-	void setup() override;
+	VideodrommLiveCodingApp();
 	void mouseMove(MouseEvent event) override;
 	void mouseDown(MouseEvent event) override;
 	void mouseDrag(MouseEvent event) override;
@@ -73,5 +75,6 @@ private:
 	// timeline
 	Anim<float>					mRenderWindowTimer;
 	bool						mFadeInDelay;
-
+	// spout
+	SpoutOut					mSpoutOut;
 };
