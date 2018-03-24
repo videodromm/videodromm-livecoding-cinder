@@ -6,7 +6,7 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
 #ifdef _DEBUG
-	settings->setConsoleWindowEnabled();
+	//settings->setConsoleWindowEnabled();
 #else
 #endif  // _DEBUG
 }
