@@ -10,8 +10,8 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 #else
 #endif  // _DEBUG
 }
+	//: mSpoutOut("VDLiveCoding", app::getWindowSize())
 VideodrommLiveCodingApp::VideodrommLiveCodingApp()
-	: mSpoutOut("VDLiveCoding", app::getWindowSize())
 {
 	// Settings
 	mVDSettings = VDSettings::create();
@@ -214,7 +214,7 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
 	gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
 	// spout sender
-	if (mVDSettings->mSpoutSender) mSpoutOut.sendViewport();
+	//if (mVDSettings->mSpoutSender) mSpoutOut.sendViewport();
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
 
