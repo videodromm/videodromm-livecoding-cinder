@@ -6,7 +6,7 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
 #ifdef _DEBUG
-	settings->setConsoleWindowEnabled();
+	//settings->setConsoleWindowEnabled();
 #else
 #endif  // _DEBUG
 }
@@ -188,7 +188,6 @@ void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
 void VideodrommLiveCodingApp::drawRender()
 {
 	gl::clear(Color::black());
-	//gl::setMatricesWindow(toPixels(getWindowSize()));
 	if (mFadeInDelay) {
 		mVDSettings->iAlpha = 0.0f;
 		if (getElapsedFrames() > mVDSession->getFadeInDelay()) {
@@ -200,6 +199,7 @@ void VideodrommLiveCodingApp::drawRender()
 	}
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);// , false);
 	if (isWindowReady) {
+		//gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
 		gl::draw(mVDSession->getRenderTexture(), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()	
 	}
 }
@@ -209,7 +209,6 @@ void VideodrommLiveCodingApp::drawMain()
 	mMainWindow->setTitle(mVDSettings->sFps + " fps videodromm");
 
 	gl::clear(Color::black());
-	//gl::setMatricesWindow(toPixels(getWindowSize()));
 	gl::enableAlphaBlending(mVDSession->isEnabledAlphaBlending());
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight, false);
 	gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()
