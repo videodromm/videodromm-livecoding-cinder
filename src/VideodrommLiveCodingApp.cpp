@@ -153,9 +153,11 @@ void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 	if (!mVDSession->handleKeyDown(event)) {
 		switch (event.getCode()) {
 		case KeyEvent::KEY_KP_PLUS:
+		case KeyEvent::KEY_DOLLAR:
 			createRenderWindow();
 			break;
 		case KeyEvent::KEY_KP_MINUS:
+		case KeyEvent::KEY_BACKSPACE:
 			deleteRenderWindows();
 			break;
 		case KeyEvent::KEY_ESCAPE:
