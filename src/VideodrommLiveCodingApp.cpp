@@ -154,10 +154,13 @@ void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 		switch (event.getCode()) {
 		case KeyEvent::KEY_KP_PLUS:
 		case KeyEvent::KEY_DOLLAR:
+		case KeyEvent::KEY_TAB:
+
 			createRenderWindow();
 			break;
 		case KeyEvent::KEY_KP_MINUS:
 		case KeyEvent::KEY_BACKSPACE:
+		case KeyEvent::KEY_l:
 			deleteRenderWindows();
 			break;
 		case KeyEvent::KEY_ESCAPE:
