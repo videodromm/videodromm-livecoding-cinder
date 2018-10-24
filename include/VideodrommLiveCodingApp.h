@@ -11,7 +11,7 @@
 // UI
 #include "VDUI.h"
 // Spout
-//#include "CiSpoutOut.h"
+#include "CiSpoutOut.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -76,5 +76,5 @@ private:
 	Anim<float>					mRenderWindowTimer;
 	bool						mFadeInDelay;
 	// spout
-	//SpoutOut					mSpoutOut;
+	SpoutOut					mSpoutOut;
 };
