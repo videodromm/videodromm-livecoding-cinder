@@ -5,6 +5,7 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 	settings->setWindowSize(1280, 720);
 	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
+	settings->setConsoleWindowEnabled();
 #ifdef _DEBUG
 	//settings->setConsoleWindowEnabled();
 #else
@@ -14,7 +15,7 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 VideodrommLiveCodingApp::VideodrommLiveCodingApp(): mSpoutOut("VDLiveCoding", app::getWindowSize())
 {
 	// Settings
-	mVDSettings = VDSettings::create();
+	mVDSettings = VDSettings::create("LiveCoding");
 	// Session
 	mVDSession = VDSession::create(mVDSettings);
 
