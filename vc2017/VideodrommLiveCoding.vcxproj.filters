@@ -414,5 +414,11 @@
     <Xml Include="Release\VDSettings.xml">
       <Filter>release</Filter>
     </Xml>
+    <Xml Include="Debug\VDLiveCoding.xml">
+      <Filter>debug</Filter>
+    </Xml>
+    <Xml Include="Release\VDLiveCoding.xml">
+      <Filter>release</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
