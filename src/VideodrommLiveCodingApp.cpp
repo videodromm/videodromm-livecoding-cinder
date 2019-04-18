@@ -5,9 +5,9 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 	settings->setWindowSize(1280, 720);
 	//settings->setBorderless();
 	settings->setWindowPos(0, 0);
-	settings->setConsoleWindowEnabled();
+	
 #ifdef _DEBUG
-	//settings->setConsoleWindowEnabled();
+	settings->setConsoleWindowEnabled();
 #else
 #endif  // _DEBUG
 }
@@ -154,21 +154,14 @@ void VideodrommLiveCodingApp::keyDown(KeyEvent event)
 	if (!mVDSession->handleKeyDown(event)) {
 		switch (event.getCode()) {
 		case KeyEvent::KEY_KP_PLUS:
-		case KeyEvent::KEY_DOLLAR:
 		case KeyEvent::KEY_TAB:
-
 			createRenderWindow();
 			break;
 		case KeyEvent::KEY_KP_MINUS:
 		case KeyEvent::KEY_BACKSPACE:
-		case KeyEvent::KEY_l:
 			deleteRenderWindows();
 			break;
-		case KeyEvent::KEY_ESCAPE:
-			// quit the application
-			quit();
-			break;
-		case KeyEvent::KEY_h:
+		case KeyEvent::KEY_c:
 			// mouse cursor and ui visibility
 			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
 			setUIVisibility(mVDSettings->mCursorVisible);
@@ -221,7 +214,8 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::setMatricesWindow(mVDSettings->mFboWidth, mVDSettings->mFboHeight, false);
 	gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mFboWidth, mVDSettings->mFboHeight));//getWindowBounds()
 	// spout sender
-	if (mVDSettings->mSpoutSender) mSpoutOut.sendViewport();
+	//if (mVDSettings->mSpoutSender) 
+		mSpoutOut.sendViewport();
 	// imgui
 	if (!mVDSettings->mCursorVisible) return;
 

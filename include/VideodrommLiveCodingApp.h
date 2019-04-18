@@ -10,6 +10,8 @@
 #include "VDSession.h"
 // UI
 #include "VDUI.h"
+// log
+#include "VDLog.h"
 // Spout
 #include "CiSpoutOut.h"
 
