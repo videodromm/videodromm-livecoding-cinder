@@ -11,23 +11,23 @@
 // UI
 #include "VDUI.h"
 // log
-#include "VDLog.h"
+//#include "VDLog.h"
 // Spout
 #include "CiSpoutOut.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
-using namespace VideoDromm;
+using namespace videodromm;
 
 #define IM_ARRAYSIZE(_ARR)			((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
-class VideodrommLiveCodingApp : public App {
+class videodrommLiveCodingApp : public App {
 
 public:
 	static void prepare(Settings *settings);
 
-	VideodrommLiveCodingApp();
+	videodrommLiveCodingApp();
 	void mouseMove(MouseEvent event) override;
 	void mouseDown(MouseEvent event) override;
 	void mouseDrag(MouseEvent event) override;
@@ -39,7 +39,7 @@ public:
 	void drawMain();
 	void drawRender();
 	void cleanup() override;
-	void setUIVisibility(bool visible);
+	void toggleCursorVisibility(bool visible);
 private:
 	// Settings
 	VDSettingsRef				mVDSettings;

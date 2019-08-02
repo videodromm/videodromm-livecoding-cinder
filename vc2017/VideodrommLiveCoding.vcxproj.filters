@@ -91,6 +91,9 @@
     <Filter Include="Source Files\AudioDrawUtils">
       <UniqueIdentifier>{c3c69f52-f4a1-42df-bbe2-b86bf9a3c97d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{33ddfd91-182b-4355-830e-e2aca083b83a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\VideodrommLiveCodingApp.cpp">
@@ -408,17 +411,16 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Debug\VDSettings.xml">
-      <Filter>debug</Filter>
-    </Xml>
-    <Xml Include="Release\VDSettings.xml">
-      <Filter>release</Filter>
-    </Xml>
     <Xml Include="Debug\VDLiveCoding.xml">
       <Filter>debug</Filter>
     </Xml>
     <Xml Include="Release\VDLiveCoding.xml">
       <Filter>release</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\assets\uniforms.json">
+      <Filter>assets</Filter>
+    </None>
   </ItemGroup>
 </Project>

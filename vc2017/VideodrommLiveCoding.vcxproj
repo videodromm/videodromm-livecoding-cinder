@@ -117,13 +117,11 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Debug\VDLiveCoding.xml" />
-    <Xml Include="Debug\VDSettings.xml">
-      <SubType>Designer</SubType>
-    </Xml>
     <Xml Include="Release\VDLiveCoding.xml" />
-    <Xml Include="Release\VDSettings.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\..\assets\uniforms.json" />
+  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-MIDI2\include\MidiConstants.h" />
     <ClInclude Include="..\..\..\Cinder\blocks\Cinder-MIDI2\include\MidiIn.h" />

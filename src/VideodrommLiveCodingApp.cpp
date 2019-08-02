@@ -1,6 +1,6 @@
-#include "VideodrommLiveCodingApp.h"
-
-void VideodrommLiveCodingApp::prepare(Settings *settings)
+#include "videodrommLiveCodingApp.h"
+ 
+void videodrommLiveCodingApp::prepare(Settings *settings)
 {
 	settings->setWindowSize(1280, 720);
 	//settings->setBorderless();
@@ -12,7 +12,7 @@ void VideodrommLiveCodingApp::prepare(Settings *settings)
 #endif  // _DEBUG
 }
 
-VideodrommLiveCodingApp::VideodrommLiveCodingApp(): mSpoutOut("VDLiveCoding", app::getWindowSize())
+videodrommLiveCodingApp::videodrommLiveCodingApp(): mSpoutOut("VDLiveCoding", app::getWindowSize())
 {
 	// Settings
 	mVDSettings = VDSettings::create("LiveCoding");
@@ -29,13 +29,13 @@ VideodrommLiveCodingApp::VideodrommLiveCodingApp(): mSpoutOut("VDLiveCoding", ap
 	mouseGlobal = false;
 	mFadeInDelay = true;
 	// mouse cursor and UI
-	setUIVisibility(mVDSettings->mCursorVisible);
+	toggleCursorVisibility(mVDSettings->mCursorVisible);
 	// windows
 	mIsShutDown = false;
 	isWindowReady = false;
 	mMainWindow = getWindow();
-	mMainWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawMain, this));
-	mMainWindow->getSignalResize().connect(std::bind(&VideodrommLiveCodingApp::resizeWindow, this));
+	mMainWindow->getSignalDraw().connect(std::bind(&videodrommLiveCodingApp::drawMain, this));
+	mMainWindow->getSignalResize().connect(std::bind(&videodrommLiveCodingApp::resizeWindow, this));
 	if (mVDSettings->mStandalone) {
 		createRenderWindow();
 		setWindowSize(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);
@@ -47,7 +47,7 @@ VideodrommLiveCodingApp::VideodrommLiveCodingApp(): mSpoutOut("VDLiveCoding", ap
 	//CI_LOG_V("setup");
 	
 }
-void VideodrommLiveCodingApp::createRenderWindow()
+void videodrommLiveCodingApp::createRenderWindow()
 {
 	isWindowReady = false;
 	mVDUI->resize();
@@ -64,25 +64,25 @@ void VideodrommLiveCodingApp::createRenderWindow()
 	allRenderWindows.push_back(mRenderWindow);
 
 	mRenderWindow->setBorderless();
-	mRenderWindow->getSignalDraw().connect(std::bind(&VideodrommLiveCodingApp::drawRender, this));
+	mRenderWindow->getSignalDraw().connect(std::bind(&videodrommLiveCodingApp::drawRender, this));
 	mVDSettings->mRenderPosXY = ivec2(mVDSettings->mRenderX, mVDSettings->mRenderY);
 	mRenderWindow->setPos(50, 50);
 	mRenderWindowTimer = 0.0f;
 	timeline().apply(&mRenderWindowTimer, 1.0f, 2.0f).finishFn([&] { positionRenderWindow(); });
 }
-void VideodrommLiveCodingApp::positionRenderWindow()
+void videodrommLiveCodingApp::positionRenderWindow()
 {
 	mRenderWindow->setPos(mVDSettings->mRenderX, mVDSettings->mRenderY);
 	isWindowReady = true;
 }
-void VideodrommLiveCodingApp::deleteRenderWindows()
+void videodrommLiveCodingApp::deleteRenderWindows()
 {
 #if defined( CINDER_MSW )
 	for (auto wRef : allRenderWindows) DestroyWindow((HWND)mRenderWindow->getNative());
 #endif
 	allRenderWindows.clear();
 }
-void VideodrommLiveCodingApp::setUIVisibility(bool visible)
+void videodrommLiveCodingApp::toggleCursorVisibility(bool visible)
 {
 	if (visible)
 	{
@@ -93,7 +93,7 @@ void VideodrommLiveCodingApp::setUIVisibility(bool visible)
 		hideCursor();
 	}
 }
-void VideodrommLiveCodingApp::update()
+void videodrommLiveCodingApp::update()
 {
 	switch (mVDSession->getCmd()) {
 	case 0:
@@ -106,7 +106,7 @@ void VideodrommLiveCodingApp::update()
 	mVDSession->setFloatUniformValueByIndex(mVDSettings->IFPS, getAverageFps());
 	mVDSession->update();
 }
-void VideodrommLiveCodingApp::cleanup()
+void videodrommLiveCodingApp::cleanup()
 {
 	if (!mIsShutDown)
 	{
@@ -122,69 +122,73 @@ void VideodrommLiveCodingApp::cleanup()
 	}
 }
 
-void VideodrommLiveCodingApp::mouseMove(MouseEvent event)
+void videodrommLiveCodingApp::mouseMove(MouseEvent event)
 {
 	if (!mVDSession->handleMouseMove(event)) {
 		// let your application perform its mouseMove handling here
 	}
 }
 
-void VideodrommLiveCodingApp::mouseDown(MouseEvent event)
+void videodrommLiveCodingApp::mouseDown(MouseEvent event)
 {
 	if (!mVDSession->handleMouseDown(event)) {
 		// let your application perform its mouseDown handling here
 	}
 }
 
-void VideodrommLiveCodingApp::mouseDrag(MouseEvent event)
+void videodrommLiveCodingApp::mouseDrag(MouseEvent event)
 {
 	if (!mVDSession->handleMouseDrag(event)) {
 		// let your application perform its mouseDrag handling here
 	}
 }
 
-void VideodrommLiveCodingApp::mouseUp(MouseEvent event)
+void videodrommLiveCodingApp::mouseUp(MouseEvent event)
 {
 	if (!mVDSession->handleMouseUp(event)) {
 		// let your application perform its mouseUp handling here
 	}
 }
-void VideodrommLiveCodingApp::keyDown(KeyEvent event)
+void videodrommLiveCodingApp::keyDown(KeyEvent event)
 {
 	if (!mVDSession->handleKeyDown(event)) {
 		switch (event.getCode()) {
 		case KeyEvent::KEY_KP_PLUS:
-		case KeyEvent::KEY_TAB:
+		//case KeyEvent::KEY_TAB:
+		case KeyEvent::KEY_F11:
 			createRenderWindow();
 			break;
 		case KeyEvent::KEY_KP_MINUS:
 		case KeyEvent::KEY_BACKSPACE:
 			deleteRenderWindows();
 			break;
+		case KeyEvent::KEY_ESCAPE:
+			// quit the application
+			quit();
+			break;
 		case KeyEvent::KEY_c:
 			// mouse cursor and ui visibility
-			mVDSettings->mCursorVisible = !mVDSettings->mCursorVisible;
-			setUIVisibility(mVDSettings->mCursorVisible);
+			toggleCursorVisibility(mVDSettings->mCursorVisible);
 			break;
 		}
 	}
 }
-void VideodrommLiveCodingApp::keyUp(KeyEvent event)
+void videodrommLiveCodingApp::keyUp(KeyEvent event)
 {
 	if (!mVDSession->handleKeyUp(event)) {
 	}
 }
-void VideodrommLiveCodingApp::resizeWindow()
+void videodrommLiveCodingApp::resizeWindow()
 {
 	mVDUI->resize();
 	//mVDSession->resize();
 }
-void VideodrommLiveCodingApp::fileDrop(FileDropEvent event)
+void videodrommLiveCodingApp::fileDrop(FileDropEvent event)
 {
 	mVDSession->fileDrop(event);
 }
 
-void VideodrommLiveCodingApp::drawRender()
+void videodrommLiveCodingApp::drawRender()
 {
 	gl::clear(Color::black());
 	if (mFadeInDelay) {
@@ -199,11 +203,11 @@ void VideodrommLiveCodingApp::drawRender()
 	gl::setMatricesWindow(mVDSettings->mRenderWidth, mVDSettings->mRenderHeight);// , false);
 	if (isWindowReady) {
 		//gl::draw(mVDSession->getRenderTexture(), getWindowBounds());
-		gl::draw(mVDSession->getRenderTexture(), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()	
+		gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mRenderWidth, mVDSettings->mRenderHeight));//getWindowBounds()	
 	}
 }
 
-void VideodrommLiveCodingApp::drawMain()
+void videodrommLiveCodingApp::drawMain()
 {
 	mMainWindow->setTitle(mVDSettings->sFps + " fps videodromm");
 
@@ -214,16 +218,16 @@ void VideodrommLiveCodingApp::drawMain()
 	gl::setMatricesWindow(mVDSettings->mFboWidth, mVDSettings->mFboHeight, false);
 	gl::draw(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()), Area(0, 0, mVDSettings->mFboWidth, mVDSettings->mFboHeight));//getWindowBounds()
 	// spout sender
-	//if (mVDSettings->mSpoutSender) 
-		mSpoutOut.sendViewport();
+	if (mVDSettings->mSpoutSender) 
+		//mSpoutOut.sendViewport();
+		mSpoutOut.sendTexture(mVDSession->getMixTexture(mVDSession->getCurrentEditIndex()));
 	// imgui
-	if (!mVDSettings->mCursorVisible) return;
-
-	mVDUI->Run("UI", (int)getAverageFps());
-	if (mVDUI->isReady()) {
+	if (mVDSession->showUI()) {
+		mVDUI->Run("UI", (int)getAverageFps());
+		if (mVDUI->isReady()) {
+		}
 	}
-
 }
 
-CINDER_APP(VideodrommLiveCodingApp, RendererGl, &VideodrommLiveCodingApp::prepare)
+CINDER_APP(videodrommLiveCodingApp, RendererGl, &videodrommLiveCodingApp::prepare)
 
