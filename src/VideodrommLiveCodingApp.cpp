@@ -30,6 +30,7 @@ videodrommLiveCodingApp::videodrommLiveCodingApp(): mSpoutOut("VDLiveCoding", ap
 	mFadeInDelay = true;
 	// mouse cursor and UI
 	toggleCursorVisibility(mVDSettings->mCursorVisible);
+	mVDSession->toggleUI();
 	// windows
 	mIsShutDown = false;
 	isWindowReady = false;

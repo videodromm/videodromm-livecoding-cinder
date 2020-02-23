@@ -417,8 +417,14 @@
     <Xml Include="Release\VDLiveCoding.xml">
       <Filter>release</Filter>
     </Xml>
+    <Xml Include="..\..\assets\textures.xml">
+      <Filter>assets</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\assets\warps.json">
+      <Filter>assets</Filter>
+    </None>
     <None Include="..\..\assets\uniforms.json">
       <Filter>assets</Filter>
     </None>
